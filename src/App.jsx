@@ -22,6 +22,7 @@ import Help from './pages/Help';
 import Onboarding from './pages/Onboarding';
 import AboutUs from './pages/AboutUs';
 import Support from './pages/Support';
+import Chat from './pages/Chat';
 
 const API_BASE_URL = 'http://localhost:8000';
 
@@ -65,6 +66,7 @@ function App() {
           <Route path="students" element={<Students />} />
           <Route path="teachers" element={<Teachers />} />
           <Route path="courses" element={<Courses />} />
+          <Route path="chat" element={<Chat />} />
           <Route path="fees" element={<Fees />} />
           <Route path="salaries" element={<Salaries />} />
           <Route path="commissions" element={<Commissions />} />

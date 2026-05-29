@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Users, UserCog, BookOpen, 
   CreditCard, Wallet, Megaphone, MonitorPlay, 
   MessageSquareMore, HelpCircle, GraduationCap, 
-  Sparkles, Rocket, LogOut
+  Sparkles, Rocket, LogOut, Video
 } from 'lucide-react';
 
 const Sidebar = ({ onLogout }) => {
@@ -13,6 +13,7 @@ const Sidebar = ({ onLogout }) => {
     { name: 'Students', icon: <Users size={20} />, path: '/students' },
     { name: 'Teachers', icon: <UserCog size={20} />, path: '/teachers' },
     { name: 'Courses', icon: <BookOpen size={20} />, path: '/courses' },
+    { name: 'Live Classes & Chat', icon: <Video size={20} />, path: '/chat' },
     { name: 'Fees', icon: <CreditCard size={20} />, path: '/fees' },
     { name: 'Teacher Salaries', icon: <Wallet size={20} />, path: '/salaries' },
     { name: 'Counsellor Payouts', icon: <Wallet size={20} />, path: '/commissions' },
