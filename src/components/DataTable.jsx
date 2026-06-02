@@ -14,7 +14,7 @@ const DataTable = ({ title, columns, data, onAdd, onEdit, onDelete }) => {
             <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
             <input 
               type="text" 
-              placeholder={`Search ${title.toLowerCase()}...`}
+              placeholder={title ? `Search ${title.toLowerCase()}...` : 'Search...'}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               style={{
@@ -42,7 +42,9 @@ const DataTable = ({ title, columns, data, onAdd, onEdit, onDelete }) => {
               {columns.map((col, idx) => (
                 <th key={idx} style={{ padding: '16px', color: 'var(--text-muted)', fontWeight: '500' }}>{col.header}</th>
               ))}
-              <th style={{ padding: '16px', textAlign: 'right', color: 'var(--text-muted)', fontWeight: '500' }}>Actions</th>
+              {(onEdit || onDelete) && (
+                <th style={{ padding: '16px', textAlign: 'right', color: 'var(--text-muted)', fontWeight: '500' }}>Actions</th>
+              )}
             </tr>
           </thead>
           <tbody>
@@ -60,14 +62,20 @@ const DataTable = ({ title, columns, data, onAdd, onEdit, onDelete }) => {
                     {col.render ? col.render(row) : row[col.accessor]}
                   </td>
                 ))}
-                <td style={{ padding: '16px', textAlign: 'right' }}>
-                  <button onClick={() => onEdit && onEdit(row)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', marginRight: '8px' }}>
-                    <Edit size={16} />
-                  </button>
-                  <button onClick={() => onDelete && onDelete(row)} style={{ background: 'transparent', border: 'none', color: 'var(--danger)', cursor: 'pointer' }}>
-                    <Trash2 size={16} />
-                  </button>
-                </td>
+                {(onEdit || onDelete) && (
+                  <td style={{ padding: '16px', textAlign: 'right' }}>
+                    {onEdit && (
+                      <button onClick={() => onEdit(row)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', marginRight: '8px' }}>
+                        <Edit size={16} />
+                      </button>
+                    )}
+                    {onDelete && (
+                      <button onClick={() => onDelete(row)} style={{ background: 'transparent', border: 'none', color: 'var(--danger)', cursor: 'pointer' }}>
+                        <Trash2 size={16} />
+                      </button>
+                    )}
+                  </td>
+                )}
               </motion.tr>
             ))}
             {data.length === 0 && (

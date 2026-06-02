@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { UserPlus, BookOpen, Briefcase, GraduationCap, ArrowRight, Upload, CheckCircle, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useToast } from '../components/ToastContext';
 
 const API_BASE_URL = 'http://localhost:8000';
 
@@ -24,7 +25,8 @@ const FileUploadBtn = ({ file, onFileChange, accept = 'image/*', label = 'Choose
 const INITIAL_STUDENT = {
   full_name: '', email: '', phone_no: '', address: '',
   guardian_name: '', guardian_mobile_no: '', guardian_email: '',
-  course_availing: '', interests: '', hobbies: '', password: ''
+  course_availing: '', interests: '', hobbies: '', password: '',
+  payment_mode: 'online', payment_plan: 'full', amount_paid: ''
 };
 
 const INITIAL_TEACHER = {
@@ -37,10 +39,11 @@ const INITIAL_TEACHER = {
 const INITIAL_COUNSELLOR = {
   full_name: '', email: '', phone_no: '', alternative_phone_no: '', address: '',
   experience: '', qualification: '', bank_account_name: '', bank_account_no: '',
-  branch_name: '', ifsc_code: '', upi_id: '', password: '', per_courses_commission: {}
+  branch_name: '', ifsc_code: '', upi_id: '', password: '', commission_type: 'default', commission_value: ''
 };
 
 const Onboarding = () => {
+  const toast = useToast();
   const [activeTab, setActiveTab] = useState('student');
   const [courses, setCourses] = useState([]);
 
@@ -66,7 +69,7 @@ const Onboarding = () => {
   const handleStudentSubmit = async () => {
     const { full_name, email, phone_no, address, guardian_name, guardian_mobile_no, course_availing, password } = studentForm;
     if (!full_name || !email || !phone_no || !address || !guardian_name || !guardian_mobile_no || !course_availing || !password) {
-      alert('Please fill all required (*) fields.');
+      toast.error('Please fill all required (*) fields.');
       return;
     }
     setLoading(true);
@@ -80,6 +83,10 @@ const Onboarding = () => {
       fd.append('guardian_mobile_no', guardian_mobile_no);
       fd.append('password', password);
       fd.append('course_availing', course_availing);
+      fd.append('payment_mode', studentForm.payment_mode);
+      fd.append('payment_plan', studentForm.payment_plan);
+      if (studentForm.amount_paid) fd.append('amount_paid', studentForm.amount_paid);
+      
       if (studentForm.guardian_email) fd.append('guardian_email', studentForm.guardian_email);
       if (studentForm.interests)
         fd.append('interests', JSON.stringify(studentForm.interests.split(',').map(s => s.trim()).filter(Boolean)));
@@ -89,15 +96,15 @@ const Onboarding = () => {
 
       const res = await fetch(`${API_BASE_URL}/api/students/create`, { method: 'POST', body: fd });
       if (res.ok) {
-        alert('✅ Student successfully onboarded!');
+        toast.success('Student successfully onboarded!');
         setStudentForm(INITIAL_STUDENT);
         setStudentFile(null);
       } else {
         const err = await res.json();
-        alert(`❌ Failed: ${err.detail || 'Unknown error'}`);
+        toast.error(`Failed: ${err.detail || 'Unknown error'}`);
       }
     } catch {
-      alert('❌ Error connecting to backend. Is the server running?');
+      toast.error('Error connecting to backend. Is the server running?');
     } finally {
       setLoading(false);
     }
@@ -107,7 +114,7 @@ const Onboarding = () => {
   const handleTeacherSubmit = async () => {
     const { full_name, email, phone_no, password } = teacherForm;
     if (!full_name || !email || !phone_no || !password) {
-      alert('Please fill all required (*) fields.');
+      toast.error('Please fill all required (*) fields.');
       return;
     }
     setLoading(true);
@@ -133,15 +140,15 @@ const Onboarding = () => {
 
       const res = await fetch(`${API_BASE_URL}/api/teachers/create`, { method: 'POST', body: fd });
       if (res.ok) {
-        alert('✅ Teacher successfully onboarded!');
+        toast.success('Teacher successfully onboarded!');
         setTeacherForm(INITIAL_TEACHER);
         setTeacherFile(null);
       } else {
         const err = await res.json();
-        alert(`❌ Failed: ${err.detail || 'Unknown error'}`);
+        toast.error(`Failed: ${err.detail || 'Unknown error'}`);
       }
     } catch {
-      alert('❌ Error connecting to backend. Is the server running?');
+      toast.error('Error connecting to backend. Is the server running?');
     } finally {
       setLoading(false);
     }
@@ -151,7 +158,7 @@ const Onboarding = () => {
   const handleCounsellorSubmit = async () => {
     const { full_name, email, phone_no, password } = counsellorForm;
     if (!full_name || !email || !phone_no || !password) {
-      alert('Please fill all required (*) fields.');
+      toast.error('Please fill all required (*) fields.');
       return;
     }
     setLoading(true);
@@ -170,21 +177,21 @@ const Onboarding = () => {
       if (counsellorForm.branch_name) fd.append('branch_name', counsellorForm.branch_name);
       if (counsellorForm.ifsc_code) fd.append('ifsc_code', counsellorForm.ifsc_code);
       if (counsellorForm.upi_id) fd.append('upi_id', counsellorForm.upi_id);
-      if (Object.keys(counsellorForm.per_courses_commission).length > 0)
-        fd.append('per_courses_commission', JSON.stringify(counsellorForm.per_courses_commission));
+      if (counsellorForm.commission_type) fd.append('commission_type', counsellorForm.commission_type);
+      if (counsellorForm.commission_value) fd.append('commission_value', counsellorForm.commission_value);
       if (counsellorFile) fd.append('profile_photo', counsellorFile);
 
       const res = await fetch(`${API_BASE_URL}/api/counsellors/create`, { method: 'POST', body: fd });
       if (res.ok) {
-        alert('✅ Counsellor successfully onboarded!');
+        toast.success('Counsellor successfully onboarded!');
         setCounsellorForm(INITIAL_COUNSELLOR);
         setCounsellorFile(null);
       } else {
         const err = await res.json();
-        alert(`❌ Failed: ${err.detail || 'Unknown error'}`);
+        toast.error(`Failed: ${err.detail || 'Unknown error'}`);
       }
     } catch {
-      alert('❌ Error connecting to backend. Is the server running?');
+      toast.error('Error connecting to backend. Is the server running?');
     } finally {
       setLoading(false);
     }
@@ -231,45 +238,24 @@ const Onboarding = () => {
   );
 
   // ─── Commission list for Counsellor ───────────────────────────────────────
-  const CommissionList = () => (
-    <div className="input-group" style={fullRow}>
-      <label style={{ color: 'var(--primary-yellow)', fontWeight: '600', fontSize: '1rem' }}>Assign Courses & Commission %</label>
-      <div style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', borderRadius: '12px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        {courses.length === 0 && <span style={{ color: 'var(--text-muted)' }}>Loading courses...</span>}
-        {courses.map(c => {
-          const isChecked = Object.prototype.hasOwnProperty.call(counsellorForm.per_courses_commission, c.course_id);
-          return (
-            <div key={c.course_id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px', gap: '12px' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', flex: 1 }}>
-                <input type="checkbox" checked={isChecked}
-                  onChange={(e) => setCounsellorForm(p => {
-                    const updated = { ...p.per_courses_commission };
-                    if (e.target.checked) updated[c.course_id] = 0;
-                    else delete updated[c.course_id];
-                    return { ...p, per_courses_commission: updated };
-                  })}
-                  style={{ width: 18, height: 18, cursor: 'pointer' }}
-                />
-                <span>{c.course_name}</span>
-              </label>
-              {isChecked && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>%</span>
-                  <input type="number" placeholder="0"
-                    value={counsellorForm.per_courses_commission[c.course_id]}
-                    onChange={(e) => setCounsellorForm(p => ({
-                      ...p,
-                      per_courses_commission: { ...p.per_courses_commission, [c.course_id]: parseFloat(e.target.value) || 0 }
-                    }))}
-                    style={{ width: 80, padding: '6px 10px', background: 'rgba(255,255,255,0.1)', border: '1px solid var(--border)', borderRadius: '8px', color: 'white' }}
-                  />
-                </div>
-              )}
-            </div>
-          );
-        })}
+  const CommissionSetup = () => (
+    <>
+      <div className="input-group" style={inputStyle}>
+        <label>Commission Type</label>
+        <select value={counsellorForm.commission_type} onChange={(e) => setCounsellorForm(p => ({ ...p, commission_type: e.target.value }))} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '8px', padding: '12px', color: 'var(--text-main)', width: '100%' }}>
+          <option value="fixed" style={{ background: 'var(--surface)', color: 'var(--text-main)' }}>Fixed Commission (₹)</option>
+          <option value="percentage" style={{ background: 'var(--surface)', color: 'var(--text-main)' }}>Percentage Commission (%)</option>
+          <option value="default" style={{ background: 'var(--surface)', color: 'var(--text-main)' }}>Default Institute Rule</option>
+        </select>
       </div>
-    </div>
+      
+      {counsellorForm.commission_type !== 'default' && (
+        <div className="input-group" style={inputStyle}>
+          <label>{counsellorForm.commission_type === 'fixed' ? 'Fixed Commission Amount (₹)' : 'Commission Percentage (%)'}</label>
+          <input type="number" placeholder="Enter amount or percentage" value={counsellorForm.commission_value} onChange={(e) => setCounsellorForm(p => ({ ...p, commission_value: parseFloat(e.target.value) || '' }))} min="0" step="0.1" />
+        </div>
+      )}
+    </>
   );
 
   // ─── Form Panels ───────────────────────────────────────────────────────────
@@ -300,6 +286,32 @@ const Onboarding = () => {
         <div className="input-group" style={inputStyle}><label>Interests (comma separated)</label><input type="text" placeholder="e.g. Reading, Traveling" {...sf('interests')} /></div>
         <div className="input-group" style={inputStyle}><label>Hobbies (comma separated)</label><input type="text" placeholder="e.g. Sports, Music" {...sf('hobbies')} /></div>
         <div className="input-group" style={inputStyle}><label>Password *</label><input type="password" placeholder="Set Account Password" {...sf('password')} /></div>
+        
+        <div className="input-group" style={fullRow}><h3 style={{ margin: '12px 0 0 0', color: 'var(--primary-yellow)', fontSize: '1.1rem' }}>Initial Fee Payment (Optional)</h3></div>
+        
+        <div className="input-group" style={inputStyle}>
+          <label>Payment Mode</label>
+          <select value={studentForm.payment_mode} onChange={e => setStudentForm(p => ({ ...p, payment_mode: e.target.value }))}>
+            <option value="online">Online (Later / Razorpay)</option>
+            <option value="cash">Cash (Collected Now)</option>
+          </select>
+        </div>
+        
+        <div className="input-group" style={inputStyle}>
+          <label>Payment Plan</label>
+          <select value={studentForm.payment_plan} onChange={e => setStudentForm(p => ({ ...p, payment_plan: e.target.value }))}>
+            <option value="full">Full Payment</option>
+            <option value="installment">Installments</option>
+          </select>
+        </div>
+
+        {studentForm.payment_mode === 'cash' && (
+          <div className="input-group" style={inputStyle}>
+            <label>Amount Collected (₹)</label>
+            <input type="number" placeholder="Enter Cash Amount" {...sf('amount_paid')} />
+          </div>
+        )}
+        
         <div className="input-group" style={inputStyle}>
           <label>Profile Photo</label>
           <FileUploadBtn file={studentFile} onFileChange={e => setStudentFile(e.target.files?.[0] || null)} />
@@ -362,7 +374,7 @@ const Onboarding = () => {
         <div className="input-group" style={fullRow}><label>Address</label><input type="text" placeholder="Address" {...cf('address')} /></div>
         <div className="input-group" style={inputStyle}><label>Qualification</label><input type="text" placeholder="Degrees / Certifications" {...cf('qualification')} /></div>
         <div className="input-group" style={inputStyle}><label>Experience</label><input type="text" placeholder="Years of Experience" {...cf('experience')} /></div>
-        <CommissionList />
+        <CommissionSetup />
         <div className="input-group" style={inputStyle}><label>Bank A/C Name</label><input type="text" placeholder="Account Holder Name" {...cf('bank_account_name')} /></div>
         <div className="input-group" style={inputStyle}><label>Bank A/C No</label><input type="text" placeholder="Account Number" {...cf('bank_account_no')} /></div>
         <div className="input-group" style={inputStyle}><label>Branch Name</label><input type="text" placeholder="Branch Name" {...cf('branch_name')} /></div>

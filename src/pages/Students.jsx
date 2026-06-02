@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useToast } from '../components/ToastContext';
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import DataTable from '../components/DataTable';
@@ -6,6 +7,7 @@ import DataTable from '../components/DataTable';
 const API_BASE_URL = 'http://localhost:8000';
 
 const StudentModal = ({ student, courses, onClose, onSave }) => {
+  const toast = useToast();
   const [formData, setFormData] = useState(student || {
     full_name: '',
     email: '',
@@ -14,7 +16,12 @@ const StudentModal = ({ student, courses, onClose, onSave }) => {
     guardian_name: '',
     guardian_mobile_no: '',
     course_availing: courses.length > 0 ? courses[0].course_id : '',
-    password: ''
+    password: '',
+    payment_mode: 'online',
+    payment_plan: 'full',
+    amount_paid: '',
+    cheque_no: '',
+    dd_no: ''
   });
   const [photoFile, setPhotoFile] = useState(null);
 
@@ -77,6 +84,56 @@ const StudentModal = ({ student, courses, onClose, onSave }) => {
               <label>Password {!student && '*'}</label>
               <input type="password" name="password" value={formData.password || ''} onChange={handleChange} placeholder={student ? "Leave blank to keep unchanged" : ""} required={!student} />
             </div>
+
+            {/* Onboarding Payment Section - Only show during creation */}
+            {!student && (
+              <>
+                <div style={{ gridColumn: '1 / -1', borderTop: '1px solid var(--border)', paddingTop: '16px', marginTop: '8px' }}>
+                  <h4 style={{ margin: '0 0 16px 0', color: 'var(--primary-yellow)' }}>Initial Onboarding Fee</h4>
+                </div>
+                
+                <div className="input-group" style={{ marginBottom: 0 }}>
+                  <label>Payment Mode</label>
+                  <select name="payment_mode" value={formData.payment_mode} onChange={handleChange} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px', padding: '14px 16px', color: 'var(--text-main)', fontFamily: 'Outfit' }}>
+                    <option value="online">Online (Student will pay later)</option>
+                    <option value="cash">Cash (Collect now)</option>
+                    <option value="cheque">Cheque (Collect now)</option>
+                    <option value="demand_draft">Demand Draft (Collect now)</option>
+                  </select>
+                </div>
+
+                {['cash', 'cheque', 'demand_draft'].includes(formData.payment_mode) && (
+                  <>
+                    <div className="input-group" style={{ marginBottom: 0 }}>
+                      <label>Payment Plan</label>
+                      <select name="payment_plan" value={formData.payment_plan} onChange={handleChange} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px', padding: '14px 16px', color: 'var(--text-main)', fontFamily: 'Outfit' }}>
+                        <option value="full">Full Payment</option>
+                        <option value="installment">Installment Plan</option>
+                      </select>
+                    </div>
+                    <div className="input-group" style={{ marginBottom: 0 }}>
+                      <label>Amount Collected (₹) *</label>
+                      <input type="number" name="amount_paid" value={formData.amount_paid} onChange={handleChange} required placeholder="e.g. 50000" />
+                    </div>
+                  </>
+                )}
+
+                {formData.payment_mode === 'cheque' && (
+                  <div className="input-group" style={{ marginBottom: 0 }}>
+                    <label>Cheque Number *</label>
+                    <input type="text" name="cheque_no" value={formData.cheque_no || ''} onChange={handleChange} placeholder="Enter Cheque No" required />
+                  </div>
+                )}
+
+                {formData.payment_mode === 'demand_draft' && (
+                  <div className="input-group" style={{ marginBottom: 0 }}>
+                    <label>DD Number *</label>
+                    <input type="text" name="dd_no" value={formData.dd_no || ''} onChange={handleChange} placeholder="Enter DD No" required />
+                  </div>
+                )}
+              </>
+            )}
+
             <div className="input-group" style={{ marginBottom: 0, gridColumn: '1 / -1' }}>
               <label>Profile Photo</label>
               <input type="file" accept="image/*" onChange={(e) => setPhotoFile(e.target.files[0])} style={{ background: 'var(--surface)', padding: '10px' }} />
@@ -96,6 +153,7 @@ const StudentModal = ({ student, courses, onClose, onSave }) => {
 };
 
 const Students = () => {
+  const toast = useToast();
   const [students, setStudents] = useState([]);
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -135,6 +193,13 @@ const Students = () => {
       if (photoFile) formData.append('profile_photo', photoFile);
 
       if (modalMode === 'create') {
+        formData.append('payment_mode', data.payment_mode || 'online');
+        formData.append('payment_plan', data.payment_plan || 'full');
+        if (['cash', 'cheque', 'demand_draft'].includes(data.payment_mode) && data.amount_paid) {
+          formData.append('amount_paid', parseFloat(data.amount_paid));
+          if (data.payment_mode === 'cheque' && data.cheque_no) formData.append('cheque_no', data.cheque_no);
+          if (data.payment_mode === 'demand_draft' && data.dd_no) formData.append('dd_no', data.dd_no);
+        }
         await fetch(`${API_BASE_URL}/api/students/create`, {
           method: 'POST',
           body: formData
@@ -150,12 +215,12 @@ const Students = () => {
       fetchData();
     } catch (err) {
       console.error('Error saving student:', err);
-      alert('Failed to save student. Check console.');
+      toast.error('Failed to save student. Check console.');
     }
   };
 
   const handleDelete = async (student) => {
-    if (window.confirm(`Are you sure you want to delete ${student.full_name}?`)) {
+    if (await toast.confirm(`Are you sure you want to delete ${student.full_name}?`)) {
       try {
         await fetch(`${API_BASE_URL}/api/students/delete-by/${student.student_id}`, { method: 'DELETE' });
         fetchData();
@@ -226,3 +291,4 @@ const Students = () => {
 };
 
 export default Students;
+

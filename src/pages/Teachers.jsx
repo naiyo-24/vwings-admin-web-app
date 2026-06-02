@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useToast } from '../components/ToastContext';
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import DataTable from '../components/DataTable';
@@ -6,6 +7,7 @@ import DataTable from '../components/DataTable';
 const API_BASE_URL = 'http://localhost:8000';
 
 const TeacherModal = ({ teacher, courses, onClose, onSave }) => {
+  const toast = useToast();
   const [activeTab, setActiveTab] = useState('personal');
   const [formData, setFormData] = useState({
     full_name: teacher?.full_name || '',
@@ -170,6 +172,7 @@ const TeacherModal = ({ teacher, courses, onClose, onSave }) => {
 };
 
 const Teachers = () => {
+  const toast = useToast();
   const [teachers, setTeachers] = useState([]);
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -228,12 +231,12 @@ const Teachers = () => {
       fetchData();
     } catch (err) {
       console.error('Error saving teacher:', err);
-      alert('Failed to save teacher. Check console.');
+      toast.error('Failed to save teacher. Check console.');
     }
   };
 
   const handleDelete = async (teacher) => {
-    if (window.confirm(`Are you sure you want to delete ${teacher.full_name}?`)) {
+    if (await toast.confirm(`Are you sure you want to delete ${teacher.full_name}?`)) {
       try {
         await fetch(`${API_BASE_URL}/api/teachers/delete-by/${teacher.teacher_id}`, { method: 'DELETE' });
         fetchData();
@@ -315,3 +318,4 @@ const Teachers = () => {
 };
 
 export default Teachers;
+

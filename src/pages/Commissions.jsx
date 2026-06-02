@@ -1,125 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import { X, FileText } from 'lucide-react';
+import { Check, X, FileText, CreditCard } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import DataTable from '../components/DataTable';
 
+import { useToast } from '../components/ToastContext';
+
 const API_BASE_URL = 'http://localhost:8000';
 
-const months = [
-  { value: 1, label: 'January' }, { value: 2, label: 'February' },
-  { value: 3, label: 'March' }, { value: 4, label: 'April' },
-  { value: 5, label: 'May' }, { value: 6, label: 'June' },
-  { value: 7, label: 'July' }, { value: 8, label: 'August' },
-  { value: 9, label: 'September' }, { value: 10, label: 'October' },
-  { value: 11, label: 'November' }, { value: 12, label: 'December' }
-];
-
-const currentYear = new Date().getFullYear();
-const years = Array.from({ length: 5 }, (_, i) => currentYear - i);
-
-const CommissionModal = ({ counsellors, onClose, onSave }) => {
-  const [formData, setFormData] = useState({
-    counsellor_id: counsellors.length > 0 ? counsellors[0].counsellor_id : '',
-    month: new Date().getMonth() + 1,
-    year: currentYear
-  });
-  const [slipFile, setSlipFile] = useState(null);
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!slipFile) {
-      alert("Please upload the payout slip file.");
-      return;
-    }
-    onSave(formData, slipFile);
-  };
-
-  return (
-    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-        className="glass-card" style={{ width: '100%', maxWidth: '600px', maxHeight: '90vh', display: 'flex', flexDirection: 'column', background: 'var(--background)', overflow: 'hidden' }}
-      >
-        <div style={{ padding: '24px 32px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h3 style={{ margin: 0 }}>Upload Payout Slip</h3>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}><X size={20}/></button>
-        </div>
-
-        <div style={{ overflowY: 'auto', flex: 1, minHeight: 0 }}>
-          <div style={{ padding: '32px' }}>
-            <form id="commission-form" onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '24px' }}>
-              
-              <div className="input-group" style={{ marginBottom: 0 }}>
-                <label>Select Counsellor *</label>
-                <select name="counsellor_id" value={formData.counsellor_id} onChange={handleChange} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px', padding: '14px 16px', color: 'var(--text-main)', fontFamily: 'Outfit' }} required>
-                  {counsellors.map(c => (
-                    <option key={c.counsellor_id} value={c.counsellor_id} style={{ background: 'var(--background)' }}>
-                      {c.full_name} ({c.counsellor_id})
-                    </option>
-                  ))}
-                  {counsellors.length === 0 && <option value="" disabled>No counsellors found</option>}
-                </select>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                <div className="input-group" style={{ marginBottom: 0 }}>
-                  <label>Month *</label>
-                  <select name="month" value={formData.month} onChange={handleChange} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px', padding: '14px 16px', color: 'var(--text-main)', fontFamily: 'Outfit' }} required>
-                    {months.map(m => (
-                      <option key={m.value} value={m.value} style={{ background: 'var(--background)' }}>{m.label}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="input-group" style={{ marginBottom: 0 }}>
-                  <label>Year *</label>
-                  <select name="year" value={formData.year} onChange={handleChange} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px', padding: '14px 16px', color: 'var(--text-main)', fontFamily: 'Outfit' }} required>
-                    {years.map(y => (
-                      <option key={y} value={y} style={{ background: 'var(--background)' }}>{y}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="input-group" style={{ marginBottom: 0 }}>
-                <label>Payout Slip (PDF/Image) *</label>
-                <input type="file" onChange={(e) => setSlipFile(e.target.files[0])} style={{ background: 'var(--surface)', padding: '10px' }} required />
-              </div>
-
-            </form>
-          </div>
-        </div>
-
-        <div style={{ padding: '24px 32px', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'flex-end', gap: '16px' }}>
-          <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
-          <button type="submit" form="commission-form" className="btn-primary">Upload Slip</button>
-        </div>
-      </motion.div>
-    </div>
-  );
-};
-
 const Commissions = () => {
-  const [commissions, setCommissions] = useState([]);
+  const toast = useToast();
+  const [activeTab, setActiveTab] = useState('ledger');
+  const [ledger, setLedger] = useState([]);
+  const [payouts, setPayouts] = useState([]);
   const [counsellors, setCounsellors] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [modalMode, setModalMode] = useState(false);
+  
+  const [payoutModalOpen, setPayoutModalOpen] = useState(false);
+  const [selectedCounsellor, setSelectedCounsellor] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('Bank Transfer');
+  const [referenceNo, setReferenceNo] = useState('');
 
   const fetchData = async () => {
+    setLoading(true);
     try {
-      const [resCommissions, resCounsellors] = await Promise.all([
-        fetch(`${API_BASE_URL}/api/commissions/get-all`), // Need to verify if get-all exists
+      const [resLedger, resPayouts, resCounsellors] = await Promise.all([
+        fetch(`${API_BASE_URL}/api/commissions/ledger`),
+        fetch(`${API_BASE_URL}/api/commissions/payouts`),
         fetch(`${API_BASE_URL}/api/counsellors/get-all`)
       ]);
-      if (resCounsellors.ok) {
-        setCounsellors(await resCounsellors.json());
-      }
-      if (resCommissions.ok) {
-        setCommissions(await resCommissions.json());
-      }
+      
+      if (resCounsellors.ok) setCounsellors(await resCounsellors.json());
+      if (resLedger.ok) setLedger(await resLedger.json());
+      if (resPayouts.ok) setPayouts(await resPayouts.json());
     } catch (err) {
       console.error('Error fetching data:', err);
     } finally {
@@ -131,127 +43,174 @@ const Commissions = () => {
     fetchData();
   }, []);
 
-  const handleSave = async (data, slipFile) => {
+  const handleUpdateStatus = async (ledgerId, newStatus) => {
     try {
-      const formData = new FormData();
-      formData.append('counsellor_id', data.counsellor_id);
-      formData.append('month', data.month);
-      formData.append('year', data.year);
-      formData.append('file', slipFile);
-
-      const response = await fetch(`${API_BASE_URL}/api/commissions/create`, {
-        method: 'POST',
-        body: formData
+      await fetch(`${API_BASE_URL}/api/commissions/ledger/${ledgerId}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
       });
+      fetchData();
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-      if (response.ok) {
-        setModalMode(false);
+  const handleGeneratePayout = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/commissions/payouts/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          counsellor_id: selectedCounsellor,
+          payment_method: paymentMethod,
+          reference_no: referenceNo
+        })
+      });
+      if (res.ok) {
+        setPayoutModalOpen(false);
         fetchData();
+        toast.success("Payout generated successfully!");
       } else {
-        const errData = await response.json();
-        alert(`Failed to upload: ${errData.detail}`);
+        const err = await res.json();
+        toast.error(`Failed: ${err.detail}`);
       }
     } catch (err) {
-      console.error('Error uploading payout slip:', err);
-      alert('Failed to save payout. Check console.');
+      console.error(err);
+      toast.error(`Error: ${err.message || 'Something went wrong'}`);
     }
   };
 
-  const handleDelete = async (commission) => {
-    if (window.confirm(`Are you sure you want to delete the payout slip for ${commission.counsellor_name} (${commission.month}/${commission.year})?`)) {
-      try {
-        await fetch(`${API_BASE_URL}/api/commissions/delete-by/${commission.commission_id}`, { method: 'DELETE' });
-        fetchData();
-      } catch (err) {
-        console.error('Error deleting payout:', err);
-      }
-    }
+  const getCounsellorName = (id) => {
+    const c = counsellors.find(c => c.counsellor_id === id);
+    return c ? c.full_name : id;
   };
 
-  const getMonthName = (monthNum) => {
-    const month = months.find(m => m.value === parseInt(monthNum));
-    return month ? month.label : monthNum;
-  };
-
-  // Map counsellor names to commissions for display
-  const displayCommissions = commissions.map(comm => {
-    const counsellor = counsellors.find(c => c.counsellor_id === comm.counsellor_id);
-    return {
-      ...comm,
-      counsellor_name: counsellor ? counsellor.full_name : 'Unknown Counsellor',
-      counsellor_email: counsellor ? counsellor.email : 'N/A',
-      counsellor_photo: counsellor ? counsellor.profile_photo : null
-    };
-  });
-
-  const columns = [
-    { 
-      header: 'Counsellor', 
-      accessor: 'counsellor_name',
-      render: (row) => (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          {row.counsellor_photo ? (
-            <img 
-              src={`${API_BASE_URL}/${row.counsellor_photo.replace(/\\\\/g, '/')}`} 
-              alt={row.counsellor_name} 
-              style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} 
-            />
-          ) : (
-            <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--gradient-button)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--deep-navy)', fontWeight: 'bold', fontSize: '14px' }}>
-              {row.counsellor_name.charAt(0).toUpperCase()}
-            </div>
-          )}
-          <div>
-            <div style={{ fontWeight: '500' }}>{row.counsellor_name}</div>
-            <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{row.counsellor_id}</div>
-          </div>
-        </div>
-      )
-    },
-    { 
-      header: 'Period', 
-      accessor: 'month',
-      render: (row) => <span style={{ padding: '4px 12px', background: 'rgba(255,255,255,0.1)', borderRadius: '12px' }}>{getMonthName(row.month)} {row.year}</span>
-    },
-    { 
-      header: 'Upload Date', 
-      accessor: 'created_at',
-      render: (row) => new Date(row.created_at).toLocaleDateString()
-    },
-    {
-      header: 'Payout Slip',
-      accessor: 'file_path',
-      render: (row) => (
-        <a 
-          href={`${API_BASE_URL}/${row.file_path.replace(/\\\\/g, '/')}`} 
-          target="_blank" 
-          rel="noopener noreferrer"
-          style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--primary-yellow)', textDecoration: 'none', background: 'rgba(245, 195, 0, 0.1)', padding: '6px 12px', borderRadius: '8px' }}
-        >
-          <FileText size={16} /> View
-        </a>
-      )
-    }
+  const ledgerColumns = [
+    { header: 'Counsellor', accessor: 'counsellor_id', render: (row) => getCounsellorName(row.counsellor_id) },
+    { header: 'Student ID', accessor: 'student_id' },
+    { header: 'Amount', accessor: 'commission_amount', render: (row) => <strong style={{ color: 'var(--primary-yellow)' }}>₹{row.commission_amount}</strong> },
+    { header: 'Status', accessor: 'status', render: (row) => {
+      let color = '#ccc';
+      if(row.status === 'Approved') color = '#4ade80';
+      if(row.status === 'Paid') color = '#60a5fa';
+      if(row.status === 'Hold') color = '#fbbf24';
+      return <span style={{ color, fontWeight: 'bold' }}>{row.status}</span>;
+    }},
+    { header: 'Actions', accessor: 'actions', render: (row) => (
+      <div style={{ display: 'flex', gap: '8px' }}>
+        {row.status === 'Pending' && (
+          <>
+            <button onClick={() => handleUpdateStatus(row.id, 'Approved')} className="btn-primary" style={{ padding: '4px 8px', fontSize: '12px' }}>Approve</button>
+            <button onClick={() => handleUpdateStatus(row.id, 'Hold')} className="btn-secondary" style={{ padding: '4px 8px', fontSize: '12px' }}>Hold</button>
+          </>
+        )}
+        {row.status === 'Hold' && (
+           <button onClick={() => handleUpdateStatus(row.id, 'Approved')} className="btn-primary" style={{ padding: '4px 8px', fontSize: '12px' }}>Approve</button>
+        )}
+      </div>
+    )}
   ];
 
-  if (loading) return <p>Loading payouts...</p>;
+  const payoutColumns = [
+    { header: 'Payout No', accessor: 'payout_no' },
+    { header: 'Counsellor', accessor: 'counsellor_id', render: (row) => getCounsellorName(row.counsellor_id) },
+    { header: 'Amount', accessor: 'amount', render: (row) => <strong style={{ color: 'var(--primary-yellow)' }}>₹{row.amount}</strong> },
+    { header: 'Method', accessor: 'payment_method' },
+    { header: 'Reference', accessor: 'reference_no', render: (row) => row.reference_no || '-' },
+    { header: 'Date', accessor: 'created_at', render: (row) => new Date(row.created_at).toLocaleDateString() }
+  ];
+
+  const selectedCounsellorData = counsellors.find(c => c.counsellor_id === selectedCounsellor);
 
   return (
     <div style={{ animation: 'slideUp 0.5s ease' }}>
-      <DataTable 
-        title="Counsellor Payouts Management" 
-        columns={columns} 
-        data={displayCommissions} 
-        onAdd={() => setModalMode(true)}
-        onDelete={handleDelete}
-      />
-      <AnimatePresence>
-        {modalMode && (
-          <CommissionModal 
-            counsellors={counsellors}
-            onClose={() => setModalMode(false)} 
-            onSave={handleSave} 
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <h2 style={{ margin: 0 }}>Counsellor Commissions & Payouts</h2>
+        <div style={{ display: 'flex', gap: '16px' }}>
+          <button className={`btn-${activeTab === 'ledger' ? 'primary' : 'secondary'}`} onClick={() => setActiveTab('ledger')}>Commission Ledger</button>
+          <button className={`btn-${activeTab === 'payouts' ? 'primary' : 'secondary'}`} onClick={() => setActiveTab('payouts')}>Payouts</button>
+        </div>
+      </div>
+
+      {activeTab === 'ledger' ? (
+        <DataTable 
+          title="Commission Ledger" 
+          columns={ledgerColumns} 
+          data={ledger} 
+        />
+      ) : (
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
+            <button className="btn-primary" onClick={() => setPayoutModalOpen(true)}>Generate Payout</button>
+          </div>
+          <DataTable 
+            title="Payouts History" 
+            columns={payoutColumns} 
+            data={payouts} 
           />
+        </div>
+      )}
+
+      <AnimatePresence>
+        {payoutModalOpen && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
+              className="glass-card" style={{ width: '100%', maxWidth: '500px', background: 'var(--background)' }}
+            >
+              <div style={{ padding: '24px 32px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h3 style={{ margin: 0 }}>Generate Payout</h3>
+                <button onClick={() => setPayoutModalOpen(false)} style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}><X size={20}/></button>
+              </div>
+              <div style={{ padding: '32px' }}>
+                <form id="payout-form" onSubmit={handleGeneratePayout} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div className="input-group">
+                    <label>Counsellor *</label>
+                    <select value={selectedCounsellor} onChange={e => setSelectedCounsellor(e.target.value)} required style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '8px', padding: '12px', color: 'var(--text-main)' }}>
+                      <option value="">Select Counsellor</option>
+                      {counsellors.map(c => (
+                        <option key={c.counsellor_id} value={c.counsellor_id}>{c.full_name} ({c.counsellor_id})</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {selectedCounsellorData && (
+                    <div style={{ background: 'rgba(255,255,255,0.05)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)', fontSize: '14px', color: 'var(--text-secondary)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', color: 'var(--text-main)', fontWeight: 'bold' }}>
+                        <CreditCard size={16} /> Bank & Payment Details
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                        <div><span style={{ opacity: 0.7 }}>A/C Name:</span> <br/>{selectedCounsellorData.bank_account_name || 'N/A'}</div>
+                        <div><span style={{ opacity: 0.7 }}>A/C No:</span> <br/>{selectedCounsellorData.bank_account_no || 'N/A'}</div>
+                        <div><span style={{ opacity: 0.7 }}>Bank & Branch:</span> <br/>{selectedCounsellorData.branch_name || 'N/A'}</div>
+                        <div><span style={{ opacity: 0.7 }}>IFSC:</span> <br/>{selectedCounsellorData.ifsc_code || 'N/A'}</div>
+                        <div style={{ gridColumn: '1 / -1' }}><span style={{ opacity: 0.7 }}>UPI ID:</span> <br/>{selectedCounsellorData.upi_id || 'N/A'}</div>
+                      </div>
+                    </div>
+                  )}
+                  <div className="input-group">
+                    <label>Payment Method *</label>
+                    <select value={paymentMethod} onChange={e => setPaymentMethod(e.target.value)} required style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '8px', padding: '12px', color: 'var(--text-main)' }}>
+                      <option value="Bank Transfer">Bank Transfer</option>
+                      <option value="UPI">UPI</option>
+                      <option value="Cash">Cash</option>
+                      <option value="Cheque">Cheque</option>
+                    </select>
+                  </div>
+                  <div className="input-group">
+                    <label>Reference No (Optional)</label>
+                    <input type="text" value={referenceNo} onChange={e => setReferenceNo(e.target.value)} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '8px', padding: '12px', color: 'var(--text-main)' }} />
+                  </div>
+                </form>
+              </div>
+              <div style={{ padding: '24px 32px', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'flex-end', gap: '16px' }}>
+                <button type="button" onClick={() => setPayoutModalOpen(false)} className="btn-secondary">Cancel</button>
+                <button type="submit" form="payout-form" className="btn-primary">Generate</button>
+              </div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </div>

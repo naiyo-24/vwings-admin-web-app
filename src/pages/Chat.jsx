@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useToast } from '../components/ToastContext';
 import { Video, Calendar, Clock, MoreVertical, Edit, Link, AlertCircle, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const API_BASE_URL = 'http://localhost:8000';
 
 const LiveClassCard = ({ liveClass, idx, onEdit }) => {
+  const toast = useToast();
   const [showMenu, setShowMenu] = useState(false);
 
   return (
@@ -96,6 +98,7 @@ const LiveClassCard = ({ liveClass, idx, onEdit }) => {
 };
 
 const MeetLinkModal = ({ liveClass, onClose, onSave }) => {
+  const toast = useToast();
   const [meetLink, setMeetLink] = useState(liveClass.meet_link || '');
 
   const handleSubmit = (e) => {
@@ -159,6 +162,7 @@ const MeetLinkModal = ({ liveClass, onClose, onSave }) => {
 };
 
 const ChatClasses = () => {
+  const toast = useToast();
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedClass, setSelectedClass] = useState(null);
@@ -198,11 +202,11 @@ const ChatClasses = () => {
         fetchClasses(); // Re-fetch to sync with DB
         setSelectedClass(null);
       } else {
-        alert('Failed to save meeting link. Server responded with an error.');
+        toast.error('Failed to save meeting link. Server responded with an error.');
       }
     } catch (err) {
       console.error('Error saving link:', err);
-      alert('Failed to save meeting link.');
+      toast.error('Failed to save meeting link.');
     }
   };
 
@@ -250,3 +254,4 @@ const ChatClasses = () => {
 };
 
 export default ChatClasses;
+

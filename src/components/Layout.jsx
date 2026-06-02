@@ -1,60 +1,23 @@
 import { useState, useEffect, useRef } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
-import { Bell, Search, LogOut, User, Mail, Shield, X, CheckCheck } from 'lucide-react';
+import { Search, LogOut, User, Mail, Shield } from 'lucide-react';
 import Footer from './Footer';
+import NotificationBell from './NotificationBell';
 
 const API_BASE_URL = 'http://localhost:8000';
 
 const Layout = ({ onLogout, admin }) => {
   const [showProfile, setShowProfile] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
-  const [notifications, setNotifications] = useState([]);
-  const [unreadCount, setUnreadCount] = useState(0);
   const profileRef = useRef(null);
-  const notifRef = useRef(null);
-
-  // Close dropdowns on outside click
+  // Close profile on outside click
   useEffect(() => {
     const handle = (e) => {
       if (profileRef.current && !profileRef.current.contains(e.target)) setShowProfile(false);
-      if (notifRef.current && !notifRef.current.contains(e.target)) setShowNotifications(false);
     };
     document.addEventListener('mousedown', handle);
     return () => document.removeEventListener('mousedown', handle);
   }, []);
-
-  // Pull recent announcements as notifications
-  useEffect(() => {
-    const fetchNotifs = async () => {
-      try {
-        const res = await fetch(`${API_BASE_URL}/announcements/get-all`);
-        if (res.ok) {
-          const data = await res.json();
-          const notifs = data.slice(-10).reverse().map(a => ({
-            id: a.announcement_id,
-            title: a.title,
-            body: a.content?.slice(0, 60) + (a.content?.length > 60 ? '...' : ''),
-            time: new Date(a.created_at).toLocaleDateString(),
-            read: false
-          }));
-          setNotifications(notifs);
-          setUnreadCount(notifs.length);
-        }
-      } catch { /* silently ignore */ }
-    };
-    fetchNotifs();
-  }, []);
-
-  const markAllRead = () => {
-    setNotifications(n => n.map(notif => ({ ...notif, read: true })));
-    setUnreadCount(0);
-  };
-
-  const markRead = (id) => {
-    setNotifications(n => n.map(notif => notif.id === id ? { ...notif, read: true } : notif));
-    setUnreadCount(c => Math.max(0, c - 1));
-  };
 
   const adminInitials = admin?.email
     ? admin.email.slice(0, 2).toUpperCase()
@@ -89,73 +52,13 @@ const Layout = ({ onLogout, admin }) => {
           <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
 
             {/* Notifications Bell */}
-            <div style={{ position: 'relative' }} ref={notifRef}>
-              <button
-                onClick={() => { setShowNotifications(v => !v); setShowProfile(false); }}
-                style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', color: 'var(--text-main)', cursor: 'pointer', padding: '10px', borderRadius: '12px', position: 'relative', display: 'flex', alignItems: 'center' }}
-              >
-                <Bell size={18} />
-                {unreadCount > 0 && (
-                  <span style={{
-                    position: 'absolute', top: '-4px', right: '-4px',
-                    background: '#ef4444', color: 'white', borderRadius: '50%',
-                    width: '18px', height: '18px', fontSize: '10px',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700'
-                  }}>
-                    {unreadCount > 9 ? '9+' : unreadCount}
-                  </span>
-                )}
-              </button>
-
-              {showNotifications && (
-                <div style={{ ...dropdownStyle, width: '340px' }}>
-                  <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontWeight: '600', fontSize: '0.95rem' }}>Notifications</span>
-                    {unreadCount > 0 && (
-                      <button onClick={markAllRead} style={{ background: 'none', border: 'none', color: 'var(--primary-yellow)', cursor: 'pointer', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        <CheckCheck size={14} /> Mark all read
-                      </button>
-                    )}
-                  </div>
-                  <div style={{ maxHeight: '360px', overflowY: 'auto' }}>
-                    {notifications.length === 0 ? (
-                      <div style={{ padding: '24px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-                        No notifications
-                      </div>
-                    ) : notifications.map(notif => (
-                      <div
-                        key={notif.id}
-                        onClick={() => markRead(notif.id)}
-                        style={{
-                          padding: '14px 20px',
-                          borderBottom: '1px solid rgba(255,255,255,0.05)',
-                          cursor: 'pointer',
-                          background: notif.read ? 'transparent' : 'rgba(245,195,0,0.05)',
-                          transition: 'background 0.2s'
-                        }}
-                      >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
-                          <div>
-                            <div style={{ fontWeight: notif.read ? '400' : '600', fontSize: '0.88rem', marginBottom: '4px' }}>
-                              {!notif.read && <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#F5C300', display: 'inline-block', marginRight: '8px' }} />}
-                              {notif.title}
-                            </div>
-                            <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{notif.body}</div>
-                          </div>
-                          <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', flexShrink: 0 }}>{notif.time}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+            <NotificationBell role="admin" userId={admin?.id || "admin"} />
 
             {/* Profile Avatar */}
             <div style={{ position: 'relative' }} ref={profileRef}>
               <div
                 className="avatar"
-                onClick={() => { setShowProfile(v => !v); setShowNotifications(false); }}
+                onClick={() => setShowProfile(v => !v)}
                 title={admin?.email}
                 style={{ cursor: 'pointer' }}
               >

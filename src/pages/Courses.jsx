@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useToast } from '../components/ToastContext';
 import { Plus, BookOpen, Clock, Users, MoreVertical, Edit, Trash2, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const API_BASE_URL = 'http://localhost:8000';
 
 const CourseCard = ({ course, idx, onEdit, onDelete }) => {
+  const toast = useToast();
   const [showMenu, setShowMenu] = useState(false);
 
   return (
@@ -85,6 +87,7 @@ const CourseCard = ({ course, idx, onEdit, onDelete }) => {
 };
 
 const CourseModal = ({ course, onClose, onSave }) => {
+  const toast = useToast();
   const [formData, setFormData] = useState(course || {
     course_name: '',
     course_description: '',
@@ -274,6 +277,7 @@ const CourseModal = ({ course, onClose, onSave }) => {
 };
 
 const Courses = () => {
+  const toast = useToast();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalMode, setModalMode] = useState(null); // 'create' | 'edit' | null
@@ -321,12 +325,12 @@ const Courses = () => {
       fetchCourses();
     } catch (err) {
       console.error('Error saving course:', err);
-      alert('Failed to save course. Check console.');
+      toast.error('Failed to save course. Check console.');
     }
   };
 
   const handleDelete = async (course) => {
-    if (window.confirm(`Are you sure you want to delete "${course.course_name}"?`)) {
+    if (await toast.confirm(`Are you sure you want to delete "${course.course_name}"?`)) {
       try {
         await fetch(`${API_BASE_URL}/api/courses/delete-by/${course.course_id}`, { method: 'DELETE' });
         fetchCourses();
@@ -384,3 +388,4 @@ const Courses = () => {
 };
 
 export default Courses;
+

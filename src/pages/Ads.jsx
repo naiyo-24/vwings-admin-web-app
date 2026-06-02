@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useToast } from '../components/ToastContext';
 import { X, Image as ImageIcon, ExternalLink } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import DataTable from '../components/DataTable';
@@ -6,6 +7,7 @@ import DataTable from '../components/DataTable';
 const API_BASE_URL = 'http://localhost:8000';
 
 const AdModal = ({ ad, onClose, onSave }) => {
+  const toast = useToast();
   const [formData, setFormData] = useState(ad || {
     headline: '',
     tagline: '',
@@ -83,6 +85,7 @@ const AdModal = ({ ad, onClose, onSave }) => {
 };
 
 const Ads = () => {
+  const toast = useToast();
   const [ads, setAds] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalMode, setModalMode] = useState(null); // 'create' | 'edit' | null
@@ -132,12 +135,12 @@ const Ads = () => {
       fetchData();
     } catch (err) {
       console.error('Error saving ad:', err);
-      alert('Failed to save advertisement. Check console.');
+      toast.error('Failed to save advertisement. Check console.');
     }
   };
 
   const handleDelete = async (ad) => {
-    if (window.confirm(`Are you sure you want to delete "${ad.headline}"?`)) {
+    if (await toast.confirm(`Are you sure you want to delete "${ad.headline}"?`)) {
       try {
         await fetch(`${API_BASE_URL}/api/ads/delete-by/${ad.id}`, { method: 'DELETE' });
         fetchData();
@@ -236,3 +239,4 @@ const Ads = () => {
 };
 
 export default Ads;
+

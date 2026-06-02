@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useToast } from '../components/ToastContext';
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import DataTable from '../components/DataTable';
@@ -6,16 +7,9 @@ import DataTable from '../components/DataTable';
 const API_BASE_URL = 'http://localhost:8000';
 
 const CounsellorModal = ({ counsellor, courses, onClose, onSave }) => {
+  const toast = useToast();
   const [activeTab, setActiveTab] = useState('personal');
   
-  // Initialize commission map from existing data
-  const initialCommissions = {};
-  if (counsellor && counsellor.per_courses_commission) {
-    Object.keys(counsellor.per_courses_commission).forEach(courseId => {
-      initialCommissions[courseId] = counsellor.per_courses_commission[courseId].commission || 0;
-    });
-  }
-
   const [formData, setFormData] = useState({
     full_name: counsellor?.full_name || '',
     phone_no: counsellor?.phone_no || '',
@@ -24,6 +18,8 @@ const CounsellorModal = ({ counsellor, courses, onClose, onSave }) => {
     address: counsellor?.address || '',
     qualification: counsellor?.qualification || '',
     experience: counsellor?.experience || '',
+    commission_type: counsellor?.commission_type || 'default',
+    commission_value: counsellor?.commission_value || '',
     bank_account_no: counsellor?.bank_account_no || '',
     bank_account_name: counsellor?.bank_account_name || '',
     branch_name: counsellor?.branch_name || '',
@@ -32,30 +28,15 @@ const CounsellorModal = ({ counsellor, courses, onClose, onSave }) => {
     password: ''
   });
 
-  const [commissions, setCommissions] = useState(initialCommissions);
   const [photoFile, setPhotoFile] = useState(null);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleCommissionToggle = (courseId, isChecked) => {
-    const newCommissions = { ...commissions };
-    if (isChecked) {
-      newCommissions[courseId] = 0; // default 0%
-    } else {
-      delete newCommissions[courseId];
-    }
-    setCommissions(newCommissions);
-  };
-
-  const handleCommissionValueChange = (courseId, value) => {
-    setCommissions({ ...commissions, [courseId]: parseFloat(value) || 0 });
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(formData, commissions, photoFile);
+    onSave(formData, {}, photoFile);
   };
 
   return (
@@ -123,37 +104,21 @@ const CounsellorModal = ({ counsellor, courses, onClose, onSave }) => {
                     <label>Experience</label>
                     <input name="experience" value={formData.experience} onChange={handleChange} />
                   </div>
-                  
-                  <div className="input-group" style={{ marginBottom: 0, gridColumn: '1 / -1' }}>
-                    <label>Course Commission Matrix (%)</label>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', background: 'var(--surface)', padding: '20px', borderRadius: '12px', border: '1px solid var(--border)' }}>
-                      {courses.map(course => (
-                        <div key={course.course_id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
-                          <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', flex: 1, fontSize: '0.9rem' }}>
-                            <input 
-                              type="checkbox" 
-                              checked={Object.prototype.hasOwnProperty.call(commissions, )} 
-                              onChange={(e) => handleCommissionToggle(course.course_id, e.target.checked)} 
-                            />
-                            {course.course_name}
-                          </label>
-                          {Object.prototype.hasOwnProperty.call(commissions, ) && (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              <input 
-                                type="number" 
-                                min="0" max="100" step="0.1"
-                                value={commissions[course.course_id]} 
-                                onChange={(e) => handleCommissionValueChange(course.course_id, e.target.value)} 
-                                style={{ width: '80px', padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'rgba(0,0,0,0.2)', color: 'white' }}
-                              />
-                              <span style={{ color: 'var(--text-muted)' }}>%</span>
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                      {courses.length === 0 && <span style={{ color: 'var(--text-muted)' }}>No courses available.</span>}
-                    </div>
+                  <div className="input-group" style={{ marginBottom: 0 }}>
+                    <label>Commission Type</label>
+                    <select name="commission_type" value={formData.commission_type} onChange={handleChange} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '8px', padding: '12px', color: 'var(--text-main)', width: '100%' }}>
+                      <option value="fixed" style={{ background: 'var(--surface)', color: 'var(--text-main)' }}>Fixed Commission (₹)</option>
+                      <option value="percentage" style={{ background: 'var(--surface)', color: 'var(--text-main)' }}>Percentage Commission (%)</option>
+                      <option value="default" style={{ background: 'var(--surface)', color: 'var(--text-main)' }}>Default Institute Rule</option>
+                    </select>
                   </div>
+                  
+                  {formData.commission_type !== 'default' && (
+                    <div className="input-group" style={{ marginBottom: 0 }}>
+                      <label>{formData.commission_type === 'fixed' ? 'Fixed Commission Amount (₹)' : 'Commission Percentage (%)'}</label>
+                      <input type="number" name="commission_value" value={formData.commission_value} onChange={handleChange} min="0" step="0.1" />
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -195,6 +160,7 @@ const CounsellorModal = ({ counsellor, courses, onClose, onSave }) => {
 };
 
 const Counsellors = () => {
+  const toast = useToast();
   const [counsellors, setCounsellors] = useState([]);
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -263,12 +229,12 @@ const Counsellors = () => {
       fetchData();
     } catch (err) {
       console.error('Error saving counsellor:', err);
-      alert(`Error: ${err.message}`);
+      toast.error(`Error: ${err.message}`);
     }
   };
 
   const handleDelete = async (counsellor) => {
-    if (window.confirm(`Are you sure you want to delete ${counsellor.full_name}? This may affect linked enquiries.`)) {
+    if (await toast.confirm(`Are you sure you want to delete ${counsellor.full_name}? This may affect linked enquiries.`)) {
       try {
         await fetch(`${API_BASE_URL}/api/counsellors/delete-by/${counsellor.counsellor_id}`, { method: 'DELETE' });
         fetchData();
@@ -307,18 +273,20 @@ const Counsellors = () => {
       accessor: 'phone_no'
     },
     { 
-      header: 'Active Commissions', 
-      accessor: 'per_courses_commission',
+      header: 'Commission Rule', 
+      accessor: 'commission_type',
       render: (row) => (
         <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-          {row.per_courses_commission && Object.keys(row.per_courses_commission).length > 0 ? (
-            Object.values(row.per_courses_commission).map((commData, idx) => (
-              <span key={idx} style={{ background: 'rgba(255,255,255,0.1)', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                {commData.course_name}: <strong style={{ color: 'var(--primary-yellow)' }}>{commData.commission}%</strong>
-              </span>
-            ))
+          {row.commission_type === 'fixed' ? (
+            <span style={{ background: 'rgba(255,255,255,0.1)', padding: '4px 8px', borderRadius: '4px', fontSize: '12px' }}>
+              Fixed: <strong style={{ color: 'var(--primary-yellow)' }}>₹{row.commission_value}</strong>
+            </span>
+          ) : row.commission_type === 'percentage' ? (
+            <span style={{ background: 'rgba(255,255,255,0.1)', padding: '4px 8px', borderRadius: '4px', fontSize: '12px' }}>
+              Percentage: <strong style={{ color: 'var(--primary-yellow)' }}>{row.commission_value}%</strong>
+            </span>
           ) : (
-            <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>None</span>
+            <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Default Rule (10%)</span>
           )}
         </div>
       )
@@ -352,3 +320,4 @@ const Counsellors = () => {
 };
 
 export default Counsellors;
+

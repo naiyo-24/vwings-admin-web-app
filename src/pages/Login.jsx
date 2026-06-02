@@ -1,20 +1,22 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LogIn, Loader2, AlertCircle } from 'lucide-react';
+import { useToast } from '../components/ToastContext';
 
 const Login = ({ onLogin }) => {
+  const toast = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
     setLoading(true);
     const result = await onLogin(email, password);
     if (!result.success) {
-      setError(result.message);
+      toast.error(result.message);
+    } else {
+      toast.success('Login successful! Welcome back.');
     }
     setLoading(false);
   };
@@ -40,24 +42,7 @@ const Login = ({ onLogin }) => {
           <p>Admin Portal Login</p>
         </div>
 
-        <AnimatePresence>
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              style={{
-                display: 'flex', alignItems: 'center', gap: '10px',
-                padding: '12px 16px', marginBottom: '16px',
-                background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)',
-                borderRadius: '12px', color: '#f87171', fontSize: '0.9rem'
-              }}
-            >
-              <AlertCircle size={16} />
-              {error}
-            </motion.div>
-          )}
-        </AnimatePresence>
+
 
         <form onSubmit={handleSubmit}>
           <div className="input-group">

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useToast } from '../components/ToastContext';
 import { X, Megaphone } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import DataTable from '../components/DataTable';
@@ -6,6 +7,7 @@ import DataTable from '../components/DataTable';
 const API_BASE_URL = 'http://localhost:8000';
 
 const AnnouncementModal = ({ announcement, onClose, onSave }) => {
+  const toast = useToast();
   const [formData, setFormData] = useState(announcement || {
     headline: '',
     description: '',
@@ -82,6 +84,7 @@ const AnnouncementModal = ({ announcement, onClose, onSave }) => {
 };
 
 const Announcements = () => {
+  const toast = useToast();
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalMode, setModalMode] = useState(null); // 'create' | 'edit' | null
@@ -136,12 +139,12 @@ const Announcements = () => {
       fetchData();
     } catch (err) {
       console.error('Error saving announcement:', err);
-      alert('Failed to save announcement. Check console.');
+      toast.error('Failed to save announcement. Check console.');
     }
   };
 
   const handleDelete = async (ann) => {
-    if (window.confirm(`Are you sure you want to delete "${ann.headline}"?`)) {
+    if (await toast.confirm(`Are you sure you want to delete "${ann.headline}"?`)) {
       try {
         await fetch(`${API_BASE_URL}/announcements/delete-by/role/${ann.role}/${ann.announcement_id}`, { method: 'DELETE' });
         fetchData();
@@ -225,3 +228,4 @@ const Announcements = () => {
 };
 
 export default Announcements;
+

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useToast } from '../components/ToastContext';
 import { X, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import DataTable from '../components/DataTable';
@@ -18,25 +19,39 @@ const currentYear = new Date().getFullYear();
 const years = Array.from({ length: 5 }, (_, i) => currentYear - i);
 
 const SalaryModal = ({ teachers, onClose, onSave }) => {
+  const toast = useToast();
   const [formData, setFormData] = useState({
     teacher_id: teachers.length > 0 ? teachers[0].teacher_id : '',
     month: new Date().getMonth() + 1,
-    year: currentYear
+    year: currentYear,
+    fixed_salary: teachers.length > 0 ? (teachers[0].monthly_salary || 0) : 0,
+    commission_per_student: 0,
+    referrals_admitted: 0,
+    transaction_id: ''
   });
-  const [salaryFile, setSalaryFile] = useState(null);
+
+  useEffect(() => {
+    const selectedTeacher = teachers.find(t => t.teacher_id === formData.teacher_id);
+    if (selectedTeacher) {
+      setFormData(prev => ({ ...prev, fixed_salary: selectedTeacher.monthly_salary || 0 }));
+    }
+  }, [formData.teacher_id, teachers]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: name === 'teacher_id' || name === 'transaction_id' ? value : Number(value) });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!salaryFile) {
-      alert("Please upload the salary slip file.");
+    if (!formData.transaction_id) {
+      toast.error("Please enter Transaction ID.");
       return;
     }
-    onSave(formData, salaryFile);
+    onSave(formData);
   };
+
+  const totalSalary = formData.fixed_salary + (formData.commission_per_student * formData.referrals_admitted);
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
@@ -84,9 +99,37 @@ const SalaryModal = ({ teachers, onClose, onSave }) => {
                 </div>
               </div>
 
-              <div className="input-group" style={{ marginBottom: 0 }}>
-                <label>Salary Slip (PDF/Image) *</label>
-                <input type="file" onChange={(e) => setSalaryFile(e.target.files[0])} style={{ background: 'var(--surface)', padding: '10px' }} required />
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div className="input-group" style={{ marginBottom: 0 }}>
+                  <label>Fixed Salary (Rs.) *</label>
+                  <input type="number" name="fixed_salary" value={formData.fixed_salary} onChange={handleChange} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px', padding: '14px 16px', color: 'var(--text-main)' }} required min="0" />
+                </div>
+                <div className="input-group" style={{ marginBottom: 0 }}>
+                  <label>Commission per Admitted Student (Rs.) *</label>
+                  <input type="number" name="commission_per_student" value={formData.commission_per_student} onChange={handleChange} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px', padding: '14px 16px', color: 'var(--text-main)' }} required min="0" />
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div className="input-group" style={{ marginBottom: 0 }}>
+                  <label>No. of Admitted Referrals *</label>
+                  <input type="number" name="referrals_admitted" value={formData.referrals_admitted} onChange={handleChange} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px', padding: '14px 16px', color: 'var(--text-main)' }} required min="0" />
+                </div>
+                <div className="input-group" style={{ marginBottom: 0 }}>
+                  <label>NEFT Transaction ID *</label>
+                  <input type="text" name="transaction_id" value={formData.transaction_id} onChange={handleChange} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px', padding: '14px 16px', color: 'var(--text-main)' }} required />
+                </div>
+              </div>
+
+              <div style={{ padding: '16px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '12px', border: '1px solid var(--border)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <span>Total Commission:</span>
+                  <span>Rs. {(formData.commission_per_student * formData.referrals_admitted).toFixed(2)}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '18px', color: 'var(--primary-yellow)' }}>
+                  <span>Total Salary:</span>
+                  <span>Rs. {totalSalary.toFixed(2)}</span>
+                </div>
               </div>
 
             </form>
@@ -95,7 +138,7 @@ const SalaryModal = ({ teachers, onClose, onSave }) => {
 
         <div style={{ padding: '24px 32px', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'flex-end', gap: '16px' }}>
           <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
-          <button type="submit" form="salary-form" className="btn-primary">Upload Slip</button>
+          <button type="submit" form="salary-form" className="btn-primary">Calculate & Pay</button>
         </div>
       </motion.div>
     </div>
@@ -103,6 +146,7 @@ const SalaryModal = ({ teachers, onClose, onSave }) => {
 };
 
 const Salaries = () => {
+  const toast = useToast();
   const [salaries, setSalaries] = useState([]);
   const [teachers, setTeachers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -129,17 +173,14 @@ const Salaries = () => {
     fetchData();
   }, []);
 
-  const handleSave = async (data, salaryFile) => {
+  const handleSave = async (data) => {
     try {
-      const formData = new FormData();
-      formData.append('teacher_id', data.teacher_id);
-      formData.append('month', data.month);
-      formData.append('year', data.year);
-      formData.append('file', salaryFile);
-
-      const response = await fetch(`${API_BASE_URL}/api/salaries/create`, {
+      const response = await fetch(`${API_BASE_URL}/api/salaries/calculate-and-pay`, {
         method: 'POST',
-        body: formData
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
       });
 
       if (response.ok) {
@@ -147,16 +188,16 @@ const Salaries = () => {
         fetchData();
       } else {
         const errData = await response.json();
-        alert(`Failed to upload: ${errData.detail}`);
+        toast.error(`Failed to process: ${errData.detail}`);
       }
     } catch (err) {
-      console.error('Error uploading salary:', err);
-      alert('Failed to save salary. Check console.');
+      console.error('Error processing salary:', err);
+      toast.error('Failed to save salary. Check console.');
     }
   };
 
   const handleDelete = async (salary) => {
-    if (window.confirm(`Are you sure you want to delete the salary slip for ${salary.teacher_name} (${salary.month}/${salary.year})?`)) {
+    if (await toast.confirm(`Are you sure you want to delete the salary slip for ${salary.teacher_name} (${salary.month}/${salary.year})?`)) {
       try {
         await fetch(`${API_BASE_URL}/api/salaries/delete-by/${salary.salary_id}`, { method: 'DELETE' });
         fetchData();
@@ -212,6 +253,21 @@ const Salaries = () => {
       render: (row) => <span style={{ padding: '4px 12px', background: 'rgba(255,255,255,0.1)', borderRadius: '12px' }}>{getMonthName(row.month)} {row.year}</span>
     },
     { 
+      header: 'Referrals (Admitted)', 
+      accessor: 'referrals_admitted',
+      render: (row) => row.referrals_admitted || 0
+    },
+    { 
+      header: 'Total Salary', 
+      accessor: 'total_salary',
+      render: (row) => <span style={{ fontWeight: 'bold', color: 'var(--primary-yellow)' }}>Rs. {(row.total_salary || 0).toFixed(2)}</span>
+    },
+    { 
+      header: 'Txn ID', 
+      accessor: 'transaction_id',
+      render: (row) => row.transaction_id || 'N/A'
+    },
+    { 
       header: 'Upload Date', 
       accessor: 'created_at',
       render: (row) => new Date(row.created_at).toLocaleDateString()
@@ -221,7 +277,7 @@ const Salaries = () => {
       accessor: 'file_path',
       render: (row) => (
         <a 
-          href={`${API_BASE_URL}/${row.file_path.replace(/\\\\/g, '/')}`} 
+          href={`${API_BASE_URL}/${row.file_path ? row.file_path.replace(/\\\\/g, '/') : ''}`} 
           target="_blank" 
           rel="noopener noreferrer"
           style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--primary-yellow)', textDecoration: 'none', background: 'rgba(245, 195, 0, 0.1)', padding: '6px 12px', borderRadius: '8px' }}
@@ -257,3 +313,4 @@ const Salaries = () => {
 };
 
 export default Salaries;
+

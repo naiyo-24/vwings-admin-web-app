@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useToast } from '../components/ToastContext';
 import { X, UserPlus, Phone, Activity } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import DataTable from '../components/DataTable';
@@ -6,6 +7,7 @@ import DataTable from '../components/DataTable';
 const API_BASE_URL = 'http://localhost:8000';
 
 const EnquiryModal = ({ enquiry, courses, counsellors, onClose, onSave }) => {
+  const toast = useToast();
   const [activeTab, setActiveTab] = useState('personal');
   const [formData, setFormData] = useState(enquiry || {
     student_name: '',
@@ -171,6 +173,7 @@ const EnquiryModal = ({ enquiry, courses, counsellors, onClose, onSave }) => {
 };
 
 const Enquiries = () => {
+  const toast = useToast();
   const [enquiries, setEnquiries] = useState([]);
   const [courses, setCourses] = useState([]);
   const [counsellors, setCounsellors] = useState([]);
@@ -229,12 +232,12 @@ const Enquiries = () => {
       fetchData();
     } catch (err) {
       console.error('Error saving enquiry:', err);
-      alert(`Error: ${err.message}`);
+      toast.error(`Error: ${err.message}`);
     }
   };
 
   const handleDelete = async (enquiry) => {
-    if (window.confirm(`Are you sure you want to delete the enquiry for ${enquiry.student_name}?`)) {
+    if (await toast.confirm(`Are you sure you want to delete the enquiry for ${enquiry.student_name}?`)) {
       try {
         await fetch(`${API_BASE_URL}/api/admission-enquiries/delete-by/${enquiry.enquiry_id}`, { method: 'DELETE' });
         fetchData();
@@ -312,7 +315,6 @@ const Enquiries = () => {
         title="Admission Enquiries" 
         columns={columns} 
         data={enquiries} 
-        onAdd={() => { setSelectedEnquiry(null); setModalMode('create'); }}
         onEdit={(enquiry) => { setSelectedEnquiry(enquiry); setModalMode('edit'); }}
         onDelete={handleDelete}
       />
@@ -332,3 +334,4 @@ const Enquiries = () => {
 };
 
 export default Enquiries;
+

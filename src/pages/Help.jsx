@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useToast } from '../components/ToastContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, MessageSquare, Phone, Mail, FileText, CheckCircle, Clock } from 'lucide-react';
 import DataTable from '../components/DataTable';
@@ -6,6 +7,7 @@ import DataTable from '../components/DataTable';
 const API_BASE_URL = 'http://localhost:8000';
 
 const HelpModal = ({ query, onClose, onSave }) => {
+  const toast = useToast();
   const [status, setStatus] = useState(query ? query.status : 'open');
 
   const handleSubmit = (e) => {
@@ -82,6 +84,7 @@ const HelpModal = ({ query, onClose, onSave }) => {
 };
 
 const Help = () => {
+  const toast = useToast();
   const [queries, setQueries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedQuery, setSelectedQuery] = useState(null);
@@ -114,7 +117,7 @@ const Help = () => {
         setSelectedQuery(null);
         fetchData();
       } else {
-        alert('Failed to update status');
+        toast.error('Failed to update status');
       }
     } catch (err) {
       console.error('Error updating status:', err);
@@ -122,7 +125,7 @@ const Help = () => {
   };
 
   const handleDelete = async (query) => {
-    if (window.confirm(`Are you sure you want to delete report ${query.report_id}?`)) {
+    if (await toast.confirm(`Are you sure you want to delete report ${query.report_id}?`)) {
       try {
         await fetch(`${API_BASE_URL}/api/helpcenter/delete/${query.report_id}`, { method: 'DELETE' });
         fetchData();
@@ -199,3 +202,4 @@ const Help = () => {
 };
 
 export default Help;
+
