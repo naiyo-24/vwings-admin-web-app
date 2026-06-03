@@ -6,7 +6,7 @@ import Footer from './Footer';
 import NotificationBell from './NotificationBell';
 import GlobalSearch from './GlobalSearch';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'https://appbackend.vwings247.me';
 
 const Layout = ({ onLogout, admin }) => {
   const [showProfile, setShowProfile] = useState(false);

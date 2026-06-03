@@ -4,7 +4,7 @@ import { X, UserPlus, Phone, Activity } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import DataTable from '../components/DataTable';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'https://appbackend.vwings247.me';
 
 const EnquiryModal = ({ enquiry, courses, counsellors, onClose, onSave }) => {
   const toast = useToast();
@@ -40,13 +40,13 @@ const EnquiryModal = ({ enquiry, courses, counsellors, onClose, onSave }) => {
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
         className="glass-card" style={{ width: '100%', maxWidth: '800px', maxHeight: '90vh', display: 'flex', flexDirection: 'column', background: 'var(--background)', overflow: 'hidden' }}
       >
         <div style={{ padding: '24px 32px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h3 style={{ margin: 0 }}>{enquiry ? 'Edit Admission Enquiry' : 'New Admission Enquiry'}</h3>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}><X size={20}/></button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}><X size={20} /></button>
         </div>
 
         <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', padding: '0 24px' }}>
@@ -58,7 +58,7 @@ const EnquiryModal = ({ enquiry, courses, counsellors, onClose, onSave }) => {
         <div style={{ overflowY: 'auto', flex: 1, minHeight: 0 }}>
           <div style={{ padding: '32px' }}>
             <form id="enquiry-form" onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              
+
               {activeTab === 'personal' && (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '24px' }}>
                   <div className="input-group" style={{ marginBottom: 0 }}>
@@ -264,7 +264,7 @@ const Enquiries = () => {
   };
 
   const getStatusColor = (status) => {
-    switch(status) {
+    switch (status) {
       case 'pending': return { bg: 'rgba(245, 195, 0, 0.2)', text: '#F5C300' };
       case 'contacted': return { bg: 'rgba(59, 130, 246, 0.2)', text: '#3b82f6' };
       case 'converted': return { bg: 'rgba(74, 222, 128, 0.2)', text: '#4ade80' };
@@ -274,8 +274,8 @@ const Enquiries = () => {
   };
 
   const columns = [
-    { 
-      header: 'Student Info', 
+    {
+      header: 'Student Info',
       accessor: 'student_name',
       render: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -289,8 +289,8 @@ const Enquiries = () => {
         </div>
       )
     },
-    { 
-      header: 'Course', 
+    {
+      header: 'Course',
       accessor: 'course_name',
       render: (row) => (
         <div>
@@ -299,13 +299,13 @@ const Enquiries = () => {
         </div>
       )
     },
-    { 
-      header: 'Counsellor', 
+    {
+      header: 'Counsellor',
       accessor: 'counsellor_name',
       render: (row) => row.counsellor_name || 'N/A'
     },
-    { 
-      header: 'Status', 
+    {
+      header: 'Status',
       accessor: 'status',
       render: (row) => {
         const colors = getStatusColor(row.status);
@@ -316,8 +316,8 @@ const Enquiries = () => {
         );
       }
     },
-    { 
-      header: 'Enquiry Date', 
+    {
+      header: 'Enquiry Date',
       accessor: 'created_at',
       render: (row) => new Date(row.created_at).toLocaleDateString()
     },
@@ -327,22 +327,22 @@ const Enquiries = () => {
 
   return (
     <div style={{ animation: 'slideUp 0.5s ease' }}>
-      <DataTable 
-        title="Admission Enquiries" 
-        columns={columns} 
-        data={enquiries} 
+      <DataTable
+        title="Admission Enquiries"
+        columns={columns}
+        data={enquiries}
         onEdit={(enquiry) => { setSelectedEnquiry(enquiry); setModalMode('edit'); }}
         onDelete={handleDelete}
         onSearch={handleSearch}
       />
       <AnimatePresence>
         {modalMode && (
-          <EnquiryModal 
+          <EnquiryModal
             enquiry={selectedEnquiry}
             courses={courses}
             counsellors={counsellors}
-            onClose={() => setModalMode(null)} 
-            onSave={handleSave} 
+            onClose={() => setModalMode(null)}
+            onSave={handleSave}
           />
         )}
       </AnimatePresence>

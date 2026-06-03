@@ -3,7 +3,7 @@ import { UserPlus, BookOpen, Briefcase, GraduationCap, ArrowRight, Upload, Check
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '../components/ToastContext';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'https://appbackend.vwings247.me';
 
 // Reusable file upload button component
 const FileUploadBtn = ({ file, onFileChange, accept = 'image/*', label = 'Choose Photo' }) => (
@@ -62,7 +62,7 @@ const Onboarding = () => {
     fetch(`${API_BASE_URL}/api/courses/get-all`)
       .then(r => r.ok ? r.json() : [])
       .then(data => setCourses(data))
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   // ─── Student Submit ───────────────────────────────────────────────────────
@@ -86,7 +86,7 @@ const Onboarding = () => {
       fd.append('payment_mode', studentForm.payment_mode);
       fd.append('payment_plan', studentForm.payment_plan);
       if (studentForm.amount_paid) fd.append('amount_paid', studentForm.amount_paid);
-      
+
       if (studentForm.guardian_email) fd.append('guardian_email', studentForm.guardian_email);
       if (studentForm.interests)
         fd.append('interests', JSON.stringify(studentForm.interests.split(',').map(s => s.trim()).filter(Boolean)));
@@ -248,7 +248,7 @@ const Onboarding = () => {
           <option value="default" style={{ background: 'var(--surface)', color: 'var(--text-main)' }}>Default Institute Rule</option>
         </select>
       </div>
-      
+
       {counsellorForm.commission_type !== 'default' && (
         <div className="input-group" style={inputStyle}>
           <label>{counsellorForm.commission_type === 'fixed' ? 'Fixed Commission Amount (₹)' : 'Commission Percentage (%)'}</label>
@@ -286,9 +286,9 @@ const Onboarding = () => {
         <div className="input-group" style={inputStyle}><label>Interests (comma separated)</label><input type="text" placeholder="e.g. Reading, Traveling" {...sf('interests')} /></div>
         <div className="input-group" style={inputStyle}><label>Hobbies (comma separated)</label><input type="text" placeholder="e.g. Sports, Music" {...sf('hobbies')} /></div>
         <div className="input-group" style={inputStyle}><label>Password *</label><input type="password" placeholder="Set Account Password" {...sf('password')} /></div>
-        
+
         <div className="input-group" style={fullRow}><h3 style={{ margin: '12px 0 0 0', color: 'var(--primary-yellow)', fontSize: '1.1rem' }}>Initial Fee Payment (Optional)</h3></div>
-        
+
         <div className="input-group" style={inputStyle}>
           <label>Payment Mode</label>
           <select value={studentForm.payment_mode} onChange={e => setStudentForm(p => ({ ...p, payment_mode: e.target.value }))}>
@@ -296,7 +296,7 @@ const Onboarding = () => {
             <option value="cash">Cash (Collected Now)</option>
           </select>
         </div>
-        
+
         <div className="input-group" style={inputStyle}>
           <label>Payment Plan</label>
           <select value={studentForm.payment_plan} onChange={e => setStudentForm(p => ({ ...p, payment_plan: e.target.value }))}>
@@ -311,7 +311,7 @@ const Onboarding = () => {
             <input type="number" placeholder="Enter Cash Amount" {...sf('amount_paid')} />
           </div>
         )}
-        
+
         <div className="input-group" style={inputStyle}>
           <label>Profile Photo</label>
           <FileUploadBtn file={studentFile} onFileChange={e => setStudentFile(e.target.files?.[0] || null)} />

@@ -4,7 +4,7 @@ import { X, Megaphone } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import DataTable from '../components/DataTable';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'https://appbackend.vwings247.me';
 
 const AnnouncementModal = ({ announcement, onClose, onSave }) => {
   const toast = useToast();
@@ -27,19 +27,19 @@ const AnnouncementModal = ({ announcement, onClose, onSave }) => {
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
         className="glass-card" style={{ width: '100%', maxWidth: '600px', maxHeight: '90vh', display: 'flex', flexDirection: 'column', background: 'var(--background)', overflow: 'hidden' }}
       >
         <div style={{ padding: '24px 32px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h3 style={{ margin: 0 }}>{announcement ? 'Edit Announcement' : 'Create Announcement'}</h3>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}><X size={20}/></button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}><X size={20} /></button>
         </div>
 
         <div style={{ overflowY: 'auto', flex: 1, minHeight: 0 }}>
           <div style={{ padding: '32px' }}>
             <form id="announcement-form" onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '24px' }}>
-              
+
               <div className="input-group" style={{ marginBottom: 0 }}>
                 <label>Headline *</label>
                 <input name="headline" value={formData.headline} onChange={handleChange} required />
@@ -47,7 +47,7 @@ const AnnouncementModal = ({ announcement, onClose, onSave }) => {
 
               <div className="input-group" style={{ marginBottom: 0 }}>
                 <label>Description *</label>
-                <textarea 
+                <textarea
                   name="description" value={formData.description} onChange={handleChange} required
                   style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px', padding: '14px 16px', color: 'var(--text-main)', fontFamily: 'Outfit', minHeight: '100px', resize: 'vertical' }}
                 />
@@ -171,8 +171,8 @@ const Announcements = () => {
   };
 
   const columns = [
-    { 
-      header: 'Headline', 
+    {
+      header: 'Headline',
       accessor: 'headline',
       render: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -186,8 +186,8 @@ const Announcements = () => {
         </div>
       )
     },
-    { 
-      header: 'Target Role', 
+    {
+      header: 'Target Role',
       accessor: 'role',
       render: (row) => (
         <span style={{ textTransform: 'capitalize', padding: '4px 12px', background: 'var(--surface-hover)', borderRadius: '12px', fontSize: '12px' }}>
@@ -195,13 +195,13 @@ const Announcements = () => {
         </span>
       )
     },
-    { 
-      header: 'Status', 
+    {
+      header: 'Status',
       accessor: 'active_status',
       render: (row) => (
-        <span style={{ 
-          padding: '4px 8px', 
-          borderRadius: '12px', 
+        <span style={{
+          padding: '4px 8px',
+          borderRadius: '12px',
           fontSize: '12px',
           fontWeight: '500',
           background: row.active_status ? 'rgba(74, 222, 128, 0.2)' : 'rgba(248, 113, 113, 0.2)',
@@ -211,8 +211,8 @@ const Announcements = () => {
         </span>
       )
     },
-    { 
-      header: 'Created On', 
+    {
+      header: 'Created On',
       accessor: 'created_at',
       render: (row) => new Date(row.created_at).toLocaleDateString()
     },
@@ -222,10 +222,10 @@ const Announcements = () => {
 
   return (
     <div style={{ animation: 'slideUp 0.5s ease' }}>
-      <DataTable 
-        title="Announcements Management" 
-        columns={columns} 
-        data={announcements} 
+      <DataTable
+        title="Announcements Management"
+        columns={columns}
+        data={announcements}
         onAdd={() => { setSelectedAnnouncement(null); setModalMode('create'); }}
         onEdit={(ann) => { setSelectedAnnouncement(ann); setModalMode('edit'); }}
         onDelete={handleDelete}
@@ -233,10 +233,10 @@ const Announcements = () => {
       />
       <AnimatePresence>
         {modalMode && (
-          <AnnouncementModal 
+          <AnnouncementModal
             announcement={selectedAnnouncement}
-            onClose={() => setModalMode(null)} 
-            onSave={handleSave} 
+            onClose={() => setModalMode(null)}
+            onSave={handleSave}
           />
         )}
       </AnimatePresence>

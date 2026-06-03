@@ -4,7 +4,7 @@ import { X, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import DataTable from '../components/DataTable';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'https://appbackend.vwings247.me';
 
 const months = [
   { value: 1, label: 'January' }, { value: 2, label: 'February' },
@@ -55,19 +55,19 @@ const SalaryModal = ({ teachers, onClose, onSave }) => {
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
         className="glass-card" style={{ width: '100%', maxWidth: '600px', maxHeight: '90vh', display: 'flex', flexDirection: 'column', background: 'var(--background)', overflow: 'hidden' }}
       >
         <div style={{ padding: '24px 32px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h3 style={{ margin: 0 }}>Upload Salary Slip</h3>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}><X size={20}/></button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}><X size={20} /></button>
         </div>
 
         <div style={{ overflowY: 'auto', flex: 1, minHeight: 0 }}>
           <div style={{ padding: '32px' }}>
             <form id="salary-form" onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '24px' }}>
-              
+
               <div className="input-group" style={{ marginBottom: 0 }}>
                 <label>Select Teacher *</label>
                 <select name="teacher_id" value={formData.teacher_id} onChange={handleChange} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px', padding: '14px 16px', color: 'var(--text-main)', fontFamily: 'Outfit' }} required>
@@ -240,16 +240,16 @@ const Salaries = () => {
   });
 
   const columns = [
-    { 
-      header: 'Teacher', 
+    {
+      header: 'Teacher',
       accessor: 'teacher_name',
       render: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           {row.teacher_photo ? (
-            <img 
-              src={`${API_BASE_URL}/${row.teacher_photo.replace(/\\\\/g, '/')}`} 
-              alt={row.teacher_name} 
-              style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} 
+            <img
+              src={`${API_BASE_URL}/${row.teacher_photo.replace(/\\\\/g, '/')}`}
+              alt={row.teacher_name}
+              style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }}
             />
           ) : (
             <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--gradient-button)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--deep-navy)', fontWeight: 'bold', fontSize: '14px' }}>
@@ -263,28 +263,28 @@ const Salaries = () => {
         </div>
       )
     },
-    { 
-      header: 'Period', 
+    {
+      header: 'Period',
       accessor: 'month',
       render: (row) => <span style={{ padding: '4px 12px', background: 'var(--surface-hover)', borderRadius: '12px' }}>{getMonthName(row.month)} {row.year}</span>
     },
-    { 
-      header: 'Referrals (Admitted)', 
+    {
+      header: 'Referrals (Admitted)',
       accessor: 'referrals_admitted',
       render: (row) => row.referrals_admitted || 0
     },
-    { 
-      header: 'Total Salary', 
+    {
+      header: 'Total Salary',
       accessor: 'total_salary',
       render: (row) => <span style={{ fontWeight: 'bold', color: 'var(--primary)' }}>Rs. {(row.total_salary || 0).toFixed(2)}</span>
     },
-    { 
-      header: 'Txn ID', 
+    {
+      header: 'Txn ID',
       accessor: 'transaction_id',
       render: (row) => row.transaction_id || 'N/A'
     },
-    { 
-      header: 'Upload Date', 
+    {
+      header: 'Upload Date',
       accessor: 'created_at',
       render: (row) => new Date(row.created_at).toLocaleDateString()
     },
@@ -292,9 +292,9 @@ const Salaries = () => {
       header: 'Salary Slip',
       accessor: 'file_path',
       render: (row) => (
-        <a 
-          href={`${API_BASE_URL}/${row.file_path ? row.file_path.replace(/\\\\/g, '/') : ''}`} 
-          target="_blank" 
+        <a
+          href={`${API_BASE_URL}/${row.file_path ? row.file_path.replace(/\\\\/g, '/') : ''}`}
+          target="_blank"
           rel="noopener noreferrer"
           style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--primary)', textDecoration: 'none', background: 'rgba(123, 7, 113, 0.1)', padding: '6px 12px', borderRadius: '8px', fontWeight: '500' }}
         >
@@ -308,20 +308,20 @@ const Salaries = () => {
 
   return (
     <div style={{ animation: 'slideUp 0.5s ease' }}>
-      <DataTable 
-        title="Salaries Management" 
-        columns={columns} 
-        data={displaySalaries} 
+      <DataTable
+        title="Salaries Management"
+        columns={columns}
+        data={displaySalaries}
         onAdd={() => setModalMode(true)}
         onDelete={handleDelete}
         onSearch={handleSearch}
       />
       <AnimatePresence>
         {modalMode && (
-          <SalaryModal 
+          <SalaryModal
             teachers={teachers}
-            onClose={() => setModalMode(false)} 
-            onSave={handleSave} 
+            onClose={() => setModalMode(false)}
+            onSave={handleSave}
           />
         )}
       </AnimatePresence>

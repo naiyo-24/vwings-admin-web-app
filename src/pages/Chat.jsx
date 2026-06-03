@@ -3,18 +3,18 @@ import { useToast } from '../components/ToastContext';
 import { Video, Calendar, Clock, MoreVertical, Edit, Link, AlertCircle, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'https://appbackend.vwings247.me';
 
 const LiveClassCard = ({ liveClass, idx, onEdit }) => {
   const toast = useToast();
   const [showMenu, setShowMenu] = useState(false);
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: idx * 0.1 }}
-      className="glass-card" 
+      className="glass-card"
       style={{ display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}
     >
       <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px', flex: 1 }}>
@@ -30,25 +30,25 @@ const LiveClassCard = ({ liveClass, idx, onEdit }) => {
               </p>
             </div>
           </div>
-          
+
           <div style={{ position: 'relative' }}>
-            <button 
+            <button
               onClick={() => setShowMenu(!showMenu)}
               style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
             >
               <MoreVertical size={20} />
             </button>
-            
+
             {showMenu && (
               <div style={{
-                position: 'absolute', right: 0, top: '24px', 
+                position: 'absolute', right: 0, top: '24px',
                 background: 'rgba(30, 10, 55, 0.95)', border: '1px solid var(--border)',
                 backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
                 borderRadius: '8px', padding: '8px', zIndex: 10,
                 minWidth: '160px', display: 'flex', flexDirection: 'column', gap: '4px',
                 boxShadow: '0 8px 32px rgba(0,0,0,0.5)'
               }}>
-                <button 
+                <button
                   onClick={() => { setShowMenu(false); onEdit(liveClass); }}
                   style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px', background: 'transparent', border: 'none', color: '#FFFFFF', cursor: 'pointer', borderRadius: '4px', textAlign: 'left' }}
                   className="menu-item-hover"
@@ -59,7 +59,7 @@ const LiveClassCard = ({ liveClass, idx, onEdit }) => {
             )}
           </div>
         </div>
-        
+
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
             <Calendar size={16} /> {liveClass.class_date || 'Date TBD'}
@@ -67,26 +67,26 @@ const LiveClassCard = ({ liveClass, idx, onEdit }) => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
             <Clock size={16} /> {liveClass.class_time || 'Time TBD'}
           </div>
-          
+
           {liveClass.meet_link ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#4285F4', fontSize: '0.9rem', marginTop: '8px', background: 'rgba(66, 133, 244, 0.1)', padding: '8px 12px', borderRadius: '8px', wordBreak: 'break-all' }}>
-              <Link size={16} style={{ flexShrink: 0 }} /> 
+              <Link size={16} style={{ flexShrink: 0 }} />
               <a href={liveClass.meet_link} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>
                 {liveClass.meet_link}
               </a>
             </div>
           ) : (
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary-yellow)', fontSize: '0.9rem', marginTop: '8px', background: 'rgba(255, 215, 0, 0.1)', padding: '8px 12px', borderRadius: '8px' }}>
-              <AlertCircle size={16} style={{ flexShrink: 0 }} /> 
+              <AlertCircle size={16} style={{ flexShrink: 0 }} />
               <span>Meeting link pending. Please add one.</span>
             </div>
           )}
         </div>
-        
+
         {!liveClass.meet_link && (
-          <button 
+          <button
             onClick={() => onEdit(liveClass)}
-            className="btn-primary" 
+            className="btn-primary"
             style={{ width: '100%', marginTop: 'auto', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}
           >
             <Link size={16} /> Add Meeting Link
@@ -108,22 +108,22 @@ const MeetLinkModal = ({ liveClass, onClose, onSave }) => {
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
         className="glass-card" style={{ width: '100%', maxWidth: '500px', display: 'flex', flexDirection: 'column', background: 'var(--background)', overflow: 'hidden' }}
       >
         <div style={{ padding: '24px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}><Link size={20} color="var(--primary-yellow)"/> Setup Meeting Link</h3>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}><X size={20}/></button>
+          <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}><Link size={20} color="var(--primary-yellow)" /> Setup Meeting Link</h3>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}><X size={20} /></button>
         </div>
 
         <form onSubmit={handleSubmit} style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          
+
           {/* Read-Only Details */}
           <div style={{ background: 'var(--surface)', padding: '16px', borderRadius: '8px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)' }}>Class Title</p>
             <p style={{ margin: 0, fontWeight: '500' }}>{liveClass.class_name}</p>
-            
+
             <div style={{ display: 'flex', gap: '16px', marginTop: '8px' }}>
               <div>
                 <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)' }}>Date</p>
@@ -134,7 +134,7 @@ const MeetLinkModal = ({ liveClass, onClose, onSave }) => {
                 <p style={{ margin: 0, fontWeight: '500' }}>{liveClass.class_time || 'Not set'}</p>
               </div>
             </div>
-            
+
             <div style={{ marginTop: '8px' }}>
               <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)' }}>Teacher</p>
               <p style={{ margin: 0, fontWeight: '500' }}>{liveClass.teacher_details && liveClass.teacher_details.length > 0 ? liveClass.teacher_details[0].full_name : 'No assigned teacher'}</p>
@@ -143,14 +143,14 @@ const MeetLinkModal = ({ liveClass, onClose, onSave }) => {
 
           <div className="input-group" style={{ marginBottom: 0, marginTop: '8px' }}>
             <label>Google Meet Link *</label>
-            <input 
-              value={meetLink} 
-              onChange={(e) => setMeetLink(e.target.value)} 
-              placeholder="https://meet.google.com/xxx-xxxx-xxx" 
-              required 
+            <input
+              value={meetLink}
+              onChange={(e) => setMeetLink(e.target.value)}
+              placeholder="https://meet.google.com/xxx-xxxx-xxx"
+              required
             />
           </div>
-          
+
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px', marginTop: '16px' }}>
             <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
             <button type="submit" className="btn-primary">Save Link</button>
@@ -197,7 +197,7 @@ const ChatClasses = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ meet_link: updatedClass.meet_link })
       });
-      
+
       if (res.ok) {
         fetchClasses(); // Re-fetch to sync with DB
         setSelectedClass(null);
@@ -224,10 +224,10 @@ const ChatClasses = () => {
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '24px' }}>
           {classes.map((liveClass, idx) => (
-            <LiveClassCard 
-              key={liveClass.class_id || liveClass.id || liveClass._id || idx} 
-              liveClass={liveClass} 
-              idx={idx} 
+            <LiveClassCard
+              key={liveClass.class_id || liveClass.id || liveClass._id || idx}
+              liveClass={liveClass}
+              idx={idx}
               onEdit={(c) => setSelectedClass(c)}
             />
           ))}
@@ -237,10 +237,10 @@ const ChatClasses = () => {
 
       <AnimatePresence>
         {selectedClass && (
-          <MeetLinkModal 
-            liveClass={selectedClass} 
-            onClose={() => setSelectedClass(null)} 
-            onSave={handleSaveLink} 
+          <MeetLinkModal
+            liveClass={selectedClass}
+            onClose={() => setSelectedClass(null)}
+            onSave={handleSaveLink}
           />
         )}
       </AnimatePresence>

@@ -4,7 +4,7 @@ import { X, Image as ImageIcon, ExternalLink } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import DataTable from '../components/DataTable';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'https://appbackend.vwings247.me';
 
 const AdModal = ({ ad, onClose, onSave }) => {
   const toast = useToast();
@@ -28,19 +28,19 @@ const AdModal = ({ ad, onClose, onSave }) => {
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
         className="glass-card" style={{ width: '100%', maxWidth: '600px', maxHeight: '90vh', display: 'flex', flexDirection: 'column', background: 'var(--background)', overflow: 'hidden' }}
       >
         <div style={{ padding: '24px 32px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h3 style={{ margin: 0 }}>{ad ? 'Edit Advertisement' : 'Create Advertisement'}</h3>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}><X size={20}/></button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}><X size={20} /></button>
         </div>
 
         <div style={{ overflowY: 'auto', flex: 1, minHeight: 0 }}>
           <div style={{ padding: '32px' }}>
             <form id="ad-form" onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '24px' }}>
-              
+
               <div className="input-group" style={{ marginBottom: 0 }}>
                 <label>Headline *</label>
                 <input name="headline" value={formData.headline} onChange={handleChange} required />
@@ -62,7 +62,7 @@ const AdModal = ({ ad, onClose, onSave }) => {
                   <input type="file" accept="image/*" onChange={(e) => setAdImage(e.target.files[0])} style={{ background: 'var(--surface)', padding: '10px' }} />
                   {ad?.ad_image && !adImage && <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Current image exists. Uploading new will replace it.</span>}
                 </div>
-                
+
                 <div className="input-group" style={{ marginBottom: 0, justifyContent: 'center' }}>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', fontSize: '1rem' }}>
                     <input type="checkbox" name="active_status" checked={formData.active_status} onChange={handleChange} style={{ width: '20px', height: '20px' }} />
@@ -167,16 +167,16 @@ const Ads = () => {
   };
 
   const columns = [
-    { 
-      header: 'Advertisement', 
+    {
+      header: 'Advertisement',
       accessor: 'headline',
       render: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           {row.ad_image ? (
-            <img 
-              src={`${API_BASE_URL}/${row.ad_image.replace(/\\\\/g, '/')}`} 
-              alt={row.headline} 
-              style={{ width: '60px', height: '40px', borderRadius: '8px', objectFit: 'cover' }} 
+            <img
+              src={`${API_BASE_URL}/${row.ad_image.replace(/\\\\/g, '/')}`}
+              alt={row.headline}
+              style={{ width: '60px', height: '40px', borderRadius: '8px', objectFit: 'cover' }}
             />
           ) : (
             <div style={{ width: '60px', height: '40px', borderRadius: '8px', background: 'rgba(245, 195, 0, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -190,13 +190,13 @@ const Ads = () => {
         </div>
       )
     },
-    { 
-      header: 'Link', 
+    {
+      header: 'Link',
       accessor: 'website_link',
       render: (row) => row.website_link ? (
-        <a 
-          href={row.website_link} 
-          target="_blank" 
+        <a
+          href={row.website_link}
+          target="_blank"
           rel="noopener noreferrer"
           style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', color: 'var(--primary-yellow)', textDecoration: 'none' }}
         >
@@ -206,13 +206,13 @@ const Ads = () => {
         <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>No link</span>
       )
     },
-    { 
-      header: 'Status', 
+    {
+      header: 'Status',
       accessor: 'active_status',
       render: (row) => (
-        <span style={{ 
-          padding: '4px 8px', 
-          borderRadius: '12px', 
+        <span style={{
+          padding: '4px 8px',
+          borderRadius: '12px',
           fontSize: '12px',
           fontWeight: '500',
           background: row.active_status ? 'rgba(74, 222, 128, 0.2)' : 'rgba(248, 113, 113, 0.2)',
@@ -222,8 +222,8 @@ const Ads = () => {
         </span>
       )
     },
-    { 
-      header: 'Created', 
+    {
+      header: 'Created',
       accessor: 'created_at',
       render: (row) => new Date(row.created_at).toLocaleDateString()
     },
@@ -233,10 +233,10 @@ const Ads = () => {
 
   return (
     <div style={{ animation: 'slideUp 0.5s ease' }}>
-      <DataTable 
-        title="Advertisements Management" 
-        columns={columns} 
-        data={ads} 
+      <DataTable
+        title="Advertisements Management"
+        columns={columns}
+        data={ads}
         onAdd={() => { setSelectedAd(null); setModalMode('create'); }}
         onEdit={(ad) => { setSelectedAd(ad); setModalMode('edit'); }}
         onDelete={handleDelete}
@@ -244,10 +244,10 @@ const Ads = () => {
       />
       <AnimatePresence>
         {modalMode && (
-          <AdModal 
+          <AdModal
             ad={selectedAd}
-            onClose={() => setModalMode(null)} 
-            onSave={handleSave} 
+            onClose={() => setModalMode(null)}
+            onSave={handleSave}
           />
         )}
       </AnimatePresence>

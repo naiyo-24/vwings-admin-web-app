@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, MessageSquare, Phone, Mail, FileText, CheckCircle, Clock } from 'lucide-react';
 import DataTable from '../components/DataTable';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'https://appbackend.vwings247.me';
 
 const HelpModal = ({ query, onClose, onSave }) => {
   const toast = useToast();
@@ -19,7 +19,7 @@ const HelpModal = ({ query, onClose, onSave }) => {
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
         className="glass-card" style={{ width: '100%', maxWidth: '600px', display: 'flex', flexDirection: 'column', background: 'var(--background)' }}
       >
@@ -27,11 +27,11 @@ const HelpModal = ({ query, onClose, onSave }) => {
           <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
             <MessageSquare size={20} color="var(--primary-yellow)" /> View Help Query
           </h3>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}><X size={20}/></button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}><X size={20} /></button>
         </div>
 
         <div style={{ padding: '32px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          
+
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
             <div>
               <label style={{ fontSize: '12px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>Report ID</label>
@@ -153,8 +153,8 @@ const Help = () => {
 
   const columns = [
     { header: 'Report ID', accessor: 'report_id', render: (row) => <span style={{ fontWeight: '600', color: 'var(--primary-yellow)' }}>#{row.report_id}</span> },
-    { 
-      header: 'User Info', 
+    {
+      header: 'User Info',
       accessor: 'name',
       render: (row) => (
         <div>
@@ -163,8 +163,8 @@ const Help = () => {
         </div>
       )
     },
-    { 
-      header: 'Issue Preview', 
+    {
+      header: 'Issue Preview',
       accessor: 'problem_description',
       render: (row) => (
         <span style={{ color: 'var(--text-muted)' }}>
@@ -172,8 +172,8 @@ const Help = () => {
         </span>
       )
     },
-    { 
-      header: 'Status', 
+    {
+      header: 'Status',
       accessor: 'status',
       render: (row) => {
         let badgeStyle = { padding: '4px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: '500', display: 'inline-flex', alignItems: 'center', gap: '4px' };
@@ -183,7 +183,7 @@ const Help = () => {
 
         return (
           <span style={badgeStyle}>
-            {row.status === 'resolved' ? <CheckCircle size={12}/> : <Clock size={12}/>}
+            {row.status === 'resolved' ? <CheckCircle size={12} /> : <Clock size={12} />}
             {row.status.replace('_', ' ').toUpperCase()}
           </span>
         );
@@ -195,22 +195,22 @@ const Help = () => {
 
   return (
     <div style={{ animation: 'slideUp 0.5s ease' }}>
-      <DataTable 
-        title="Help Center Queries" 
-        columns={columns} 
-        data={queries} 
+      <DataTable
+        title="Help Center Queries"
+        columns={columns}
+        data={queries}
         // We only edit existing queries in the admin panel, users create them.
         onEdit={(query) => setSelectedQuery(query)}
         onDelete={handleDelete}
         onSearch={handleSearch}
       />
-      
+
       <AnimatePresence>
         {selectedQuery && (
-          <HelpModal 
+          <HelpModal
             query={selectedQuery}
-            onClose={() => setSelectedQuery(null)} 
-            onSave={handleSave} 
+            onClose={() => setSelectedQuery(null)}
+            onSave={handleSave}
           />
         )}
       </AnimatePresence>
