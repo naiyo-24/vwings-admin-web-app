@@ -5,7 +5,7 @@ import { Search, LogOut, User, Mail, Shield } from 'lucide-react';
 import Footer from './Footer';
 import NotificationBell from './NotificationBell';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'https://appbackend.vwings247.me';
 
 const Layout = ({ onLogout, admin }) => {
   const [showProfile, setShowProfile] = useState(false);

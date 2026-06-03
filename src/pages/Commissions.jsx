@@ -5,7 +5,7 @@ import DataTable from '../components/DataTable';
 
 import { useToast } from '../components/ToastContext';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'https://appbackend.vwings247.me';
 
 const Commissions = () => {
   const toast = useToast();
@@ -14,7 +14,7 @@ const Commissions = () => {
   const [payouts, setPayouts] = useState([]);
   const [counsellors, setCounsellors] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   const [payoutModalOpen, setPayoutModalOpen] = useState(false);
   const [selectedCounsellor, setSelectedCounsellor] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('Bank Transfer');
@@ -28,7 +28,7 @@ const Commissions = () => {
         fetch(`${API_BASE_URL}/api/commissions/payouts`),
         fetch(`${API_BASE_URL}/api/counsellors/get-all`)
       ]);
-      
+
       if (resCounsellors.ok) setCounsellors(await resCounsellors.json());
       if (resLedger.ok) setLedger(await resLedger.json());
       if (resPayouts.ok) setPayouts(await resPayouts.json());
@@ -91,26 +91,30 @@ const Commissions = () => {
     { header: 'Counsellor', accessor: 'counsellor_id', render: (row) => getCounsellorName(row.counsellor_id) },
     { header: 'Student ID', accessor: 'student_id' },
     { header: 'Amount', accessor: 'commission_amount', render: (row) => <strong style={{ color: 'var(--primary-yellow)' }}>₹{row.commission_amount}</strong> },
-    { header: 'Status', accessor: 'status', render: (row) => {
-      let color = '#ccc';
-      if(row.status === 'Approved') color = '#4ade80';
-      if(row.status === 'Paid') color = '#60a5fa';
-      if(row.status === 'Hold') color = '#fbbf24';
-      return <span style={{ color, fontWeight: 'bold' }}>{row.status}</span>;
-    }},
-    { header: 'Actions', accessor: 'actions', render: (row) => (
-      <div style={{ display: 'flex', gap: '8px' }}>
-        {row.status === 'Pending' && (
-          <>
+    {
+      header: 'Status', accessor: 'status', render: (row) => {
+        let color = '#ccc';
+        if (row.status === 'Approved') color = '#4ade80';
+        if (row.status === 'Paid') color = '#60a5fa';
+        if (row.status === 'Hold') color = '#fbbf24';
+        return <span style={{ color, fontWeight: 'bold' }}>{row.status}</span>;
+      }
+    },
+    {
+      header: 'Actions', accessor: 'actions', render: (row) => (
+        <div style={{ display: 'flex', gap: '8px' }}>
+          {row.status === 'Pending' && (
+            <>
+              <button onClick={() => handleUpdateStatus(row.id, 'Approved')} className="btn-primary" style={{ padding: '4px 8px', fontSize: '12px' }}>Approve</button>
+              <button onClick={() => handleUpdateStatus(row.id, 'Hold')} className="btn-secondary" style={{ padding: '4px 8px', fontSize: '12px' }}>Hold</button>
+            </>
+          )}
+          {row.status === 'Hold' && (
             <button onClick={() => handleUpdateStatus(row.id, 'Approved')} className="btn-primary" style={{ padding: '4px 8px', fontSize: '12px' }}>Approve</button>
-            <button onClick={() => handleUpdateStatus(row.id, 'Hold')} className="btn-secondary" style={{ padding: '4px 8px', fontSize: '12px' }}>Hold</button>
-          </>
-        )}
-        {row.status === 'Hold' && (
-           <button onClick={() => handleUpdateStatus(row.id, 'Approved')} className="btn-primary" style={{ padding: '4px 8px', fontSize: '12px' }}>Approve</button>
-        )}
-      </div>
-    )}
+          )}
+        </div>
+      )
+    }
   ];
 
   const payoutColumns = [
@@ -135,20 +139,20 @@ const Commissions = () => {
       </div>
 
       {activeTab === 'ledger' ? (
-        <DataTable 
-          title="Commission Ledger" 
-          columns={ledgerColumns} 
-          data={ledger} 
+        <DataTable
+          title="Commission Ledger"
+          columns={ledgerColumns}
+          data={ledger}
         />
       ) : (
         <div>
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
             <button className="btn-primary" onClick={() => setPayoutModalOpen(true)}>Generate Payout</button>
           </div>
-          <DataTable 
-            title="Payouts History" 
-            columns={payoutColumns} 
-            data={payouts} 
+          <DataTable
+            title="Payouts History"
+            columns={payoutColumns}
+            data={payouts}
           />
         </div>
       )}
@@ -156,13 +160,13 @@ const Commissions = () => {
       <AnimatePresence>
         {payoutModalOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
               className="glass-card" style={{ width: '100%', maxWidth: '500px', background: 'var(--background)' }}
             >
               <div style={{ padding: '24px 32px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h3 style={{ margin: 0 }}>Generate Payout</h3>
-                <button onClick={() => setPayoutModalOpen(false)} style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}><X size={20}/></button>
+                <button onClick={() => setPayoutModalOpen(false)} style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}><X size={20} /></button>
               </div>
               <div style={{ padding: '32px' }}>
                 <form id="payout-form" onSubmit={handleGeneratePayout} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -182,11 +186,11 @@ const Commissions = () => {
                         <CreditCard size={16} /> Bank & Payment Details
                       </div>
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                        <div><span style={{ opacity: 0.7 }}>A/C Name:</span> <br/>{selectedCounsellorData.bank_account_name || 'N/A'}</div>
-                        <div><span style={{ opacity: 0.7 }}>A/C No:</span> <br/>{selectedCounsellorData.bank_account_no || 'N/A'}</div>
-                        <div><span style={{ opacity: 0.7 }}>Bank & Branch:</span> <br/>{selectedCounsellorData.branch_name || 'N/A'}</div>
-                        <div><span style={{ opacity: 0.7 }}>IFSC:</span> <br/>{selectedCounsellorData.ifsc_code || 'N/A'}</div>
-                        <div style={{ gridColumn: '1 / -1' }}><span style={{ opacity: 0.7 }}>UPI ID:</span> <br/>{selectedCounsellorData.upi_id || 'N/A'}</div>
+                        <div><span style={{ opacity: 0.7 }}>A/C Name:</span> <br />{selectedCounsellorData.bank_account_name || 'N/A'}</div>
+                        <div><span style={{ opacity: 0.7 }}>A/C No:</span> <br />{selectedCounsellorData.bank_account_no || 'N/A'}</div>
+                        <div><span style={{ opacity: 0.7 }}>Bank & Branch:</span> <br />{selectedCounsellorData.branch_name || 'N/A'}</div>
+                        <div><span style={{ opacity: 0.7 }}>IFSC:</span> <br />{selectedCounsellorData.ifsc_code || 'N/A'}</div>
+                        <div style={{ gridColumn: '1 / -1' }}><span style={{ opacity: 0.7 }}>UPI ID:</span> <br />{selectedCounsellorData.upi_id || 'N/A'}</div>
                       </div>
                     </div>
                   )}

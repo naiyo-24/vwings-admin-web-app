@@ -4,12 +4,12 @@ import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import DataTable from '../components/DataTable';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'https://appbackend.vwings247.me';
 
 const CounsellorModal = ({ counsellor, courses, onClose, onSave }) => {
   const toast = useToast();
   const [activeTab, setActiveTab] = useState('personal');
-  
+
   const [formData, setFormData] = useState({
     full_name: counsellor?.full_name || '',
     phone_no: counsellor?.phone_no || '',
@@ -41,13 +41,13 @@ const CounsellorModal = ({ counsellor, courses, onClose, onSave }) => {
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
         className="glass-card" style={{ width: '100%', maxWidth: '800px', maxHeight: '90vh', display: 'flex', flexDirection: 'column', background: 'var(--background)', overflow: 'hidden' }}
       >
         <div style={{ padding: '24px 32px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h3 style={{ margin: 0 }}>{counsellor ? 'Edit Counsellor' : 'Add Counsellor'}</h3>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}><X size={20}/></button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}><X size={20} /></button>
         </div>
 
         <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', padding: '0 24px' }}>
@@ -59,7 +59,7 @@ const CounsellorModal = ({ counsellor, courses, onClose, onSave }) => {
         <div style={{ overflowY: 'auto', flex: 1, minHeight: 0 }}>
           <div style={{ padding: '32px' }}>
             <form id="counsellor-form" onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              
+
               {activeTab === 'personal' && (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '24px' }}>
                   <div className="input-group" style={{ marginBottom: 0 }}>
@@ -112,7 +112,7 @@ const CounsellorModal = ({ counsellor, courses, onClose, onSave }) => {
                       <option value="default" style={{ background: 'var(--surface)', color: 'var(--text-main)' }}>Default Institute Rule</option>
                     </select>
                   </div>
-                  
+
                   {formData.commission_type !== 'default' && (
                     <div className="input-group" style={{ marginBottom: 0 }}>
                       <label>{formData.commission_type === 'fixed' ? 'Fixed Commission Amount (₹)' : 'Commission Percentage (%)'}</label>
@@ -196,11 +196,11 @@ const Counsellors = () => {
           formData.append(key, value);
         }
       });
-      
+
       if (Object.keys(commissions).length > 0) {
         formData.append('per_courses_commission', JSON.stringify(commissions));
       }
-      
+
       if (photoFile) {
         formData.append('profile_photo', photoFile);
       }
@@ -245,16 +245,16 @@ const Counsellors = () => {
   };
 
   const columns = [
-    { 
-      header: 'Counsellor Profile', 
+    {
+      header: 'Counsellor Profile',
       accessor: 'full_name',
       render: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           {row.profile_photo ? (
-            <img 
-              src={`${API_BASE_URL}/${row.profile_photo.replace(/\\\\/g, '/')}`} 
-              alt={row.full_name} 
-              style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} 
+            <img
+              src={`${API_BASE_URL}/${row.profile_photo.replace(/\\\\/g, '/')}`}
+              alt={row.full_name}
+              style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }}
             />
           ) : (
             <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--gradient-button)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--deep-navy)', fontWeight: 'bold', fontSize: '14px' }}>
@@ -268,12 +268,12 @@ const Counsellors = () => {
         </div>
       )
     },
-    { 
-      header: 'Phone Number', 
+    {
+      header: 'Phone Number',
       accessor: 'phone_no'
     },
-    { 
-      header: 'Commission Rule', 
+    {
+      header: 'Commission Rule',
       accessor: 'commission_type',
       render: (row) => (
         <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
@@ -298,20 +298,20 @@ const Counsellors = () => {
 
   return (
     <div style={{ animation: 'slideUp 0.5s ease' }}>
-      <DataTable 
-        title="Admission Counsellors" 
-        columns={columns} 
-        data={counsellors} 
+      <DataTable
+        title="Admission Counsellors"
+        columns={columns}
+        data={counsellors}
         onEdit={(counsellor) => { setSelectedCounsellor(counsellor); setModalMode('edit'); }}
         onDelete={handleDelete}
       />
       <AnimatePresence>
         {modalMode && (
-          <CounsellorModal 
+          <CounsellorModal
             counsellor={selectedCounsellor}
             courses={courses}
-            onClose={() => setModalMode(null)} 
-            onSave={handleSave} 
+            onClose={() => setModalMode(null)}
+            onSave={handleSave}
           />
         )}
       </AnimatePresence>

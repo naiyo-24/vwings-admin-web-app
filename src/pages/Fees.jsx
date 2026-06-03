@@ -4,7 +4,7 @@ import { X, FileText, Download } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import DataTable from '../components/DataTable';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'https://appbackend.vwings247.me';
 
 const FeeModal = ({ students, onClose, onSave }) => {
   const toast = useToast();
@@ -37,7 +37,7 @@ const FeeModal = ({ students, onClose, onSave }) => {
           const paidInstallments = data.paid_installments || [];
           const allInstallments = [1, 2, 3, 4];
           const available = allInstallments.filter(i => !paidInstallments.includes(i));
-          
+
           if (paidInstallments.length === 0) {
             setFormData(prev => ({ ...prev, payment_type: 'full', amount: pending }));
           } else if (available.length > 0) {
@@ -68,19 +68,19 @@ const FeeModal = ({ students, onClose, onSave }) => {
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
         className="glass-card" style={{ width: '100%', maxWidth: '600px', maxHeight: '90vh', display: 'flex', flexDirection: 'column', background: 'var(--background)', overflow: 'hidden' }}
       >
         <div style={{ padding: '24px 32px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h3 style={{ margin: 0 }}>Record Fee Payment</h3>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}><X size={20}/></button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}><X size={20} /></button>
         </div>
 
         <div style={{ overflowY: 'auto', flex: 1, minHeight: 0 }}>
           <div style={{ padding: '32px' }}>
             <form id="fee-form" onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '24px' }}>
-              
+
               <div className="input-group" style={{ marginBottom: 0 }}>
                 <label>Select Student *</label>
                 <select name="student_id" value={formData.student_id} onChange={handleChange} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px', padding: '14px 16px', color: 'var(--text-main)', fontFamily: 'Outfit' }} required>
@@ -181,13 +181,13 @@ const ProfileModal = ({ students, onClose, onSave }) => {
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
         className="glass-card" style={{ width: '100%', maxWidth: '500px', background: 'var(--background)', overflow: 'hidden' }}
       >
         <div style={{ padding: '24px 32px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h3 style={{ margin: 0 }}>Set Fee Profile</h3>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}><X size={20}/></button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}><X size={20} /></button>
         </div>
 
         <div style={{ padding: '32px' }}>
@@ -247,18 +247,18 @@ const EditFeeModal = ({ fee, onClose, onSave }) => {
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
         className="glass-card" style={{ width: '100%', maxWidth: '500px', background: 'var(--background)', overflow: 'hidden' }}
       >
         <div style={{ padding: '24px 32px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h3 style={{ margin: 0 }}>Edit Fee Record</h3>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}><X size={20}/></button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}><X size={20} /></button>
         </div>
 
         <div style={{ padding: '32px' }}>
           <form id="edit-fee-form" onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '24px' }}>
-            
+
             <div className="input-group" style={{ marginBottom: 0 }}>
               <label>Amount (₹) *</label>
               <input type="number" name="amount" value={formData.amount} onChange={handleChange} min="0" required />
@@ -345,7 +345,7 @@ const Fees = () => {
             dd_no: data.payment_mode === 'demand_draft' ? data.dd_no : null
           })
         });
-        
+
         if (cashRes.ok) {
           setModalMode(false);
           fetchData();
@@ -478,16 +478,16 @@ const Fees = () => {
   });
 
   const columns = [
-    { 
-      header: 'Student', 
+    {
+      header: 'Student',
       accessor: 'student_name',
       render: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           {row.student_photo ? (
-            <img 
-              src={`${API_BASE_URL}/${row.student_photo.replace(/\\\\/g, '/')}`} 
-              alt={row.student_name} 
-              style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} 
+            <img
+              src={`${API_BASE_URL}/${row.student_photo.replace(/\\\\/g, '/')}`}
+              alt={row.student_name}
+              style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }}
             />
           ) : (
             <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--gradient-button)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--deep-navy)', fontWeight: 'bold', fontSize: '14px' }}>
@@ -501,8 +501,8 @@ const Fees = () => {
         </div>
       )
     },
-    { 
-      header: 'Payment Type', 
+    {
+      header: 'Payment Type',
       accessor: 'payment_type',
       render: (row) => (
         <span style={{ padding: '4px 12px', background: 'rgba(255,255,255,0.1)', borderRadius: '12px', textTransform: 'capitalize', fontWeight: '500', color: row.payment_type === 'full' ? '#10b981' : '#3b82f6' }}>
@@ -520,9 +520,9 @@ const Fees = () => {
         else if (row.payment_mode === 'cheque') { bgColor = 'rgba(59, 130, 246, 0.1)'; textColor = '#3b82f6'; }
         else if (row.payment_mode === 'demand_draft') { bgColor = 'rgba(139, 92, 246, 0.1)'; textColor = '#8b5cf6'; }
         return (
-          <span style={{ 
-            padding: '4px 8px', 
-            borderRadius: '8px', 
+          <span style={{
+            padding: '4px 8px',
+            borderRadius: '8px',
             fontSize: '0.8rem',
             background: bgColor,
             color: textColor,
@@ -546,9 +546,9 @@ const Fees = () => {
       header: 'Status',
       accessor: 'payment_status',
       render: (row) => (
-        <span style={{ 
-          padding: '4px 8px', 
-          borderRadius: '8px', 
+        <span style={{
+          padding: '4px 8px',
+          borderRadius: '8px',
           fontSize: '0.8rem',
           background: row.payment_status === 'completed' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)',
           color: row.payment_status === 'completed' ? '#10b981' : '#f59e0b'
@@ -566,8 +566,8 @@ const Fees = () => {
         </span>
       )
     },
-    { 
-      header: 'Upload Date', 
+    {
+      header: 'Upload Date',
       accessor: 'created_at',
       render: (row) => new Date(row.created_at).toLocaleDateString()
     },
@@ -575,9 +575,9 @@ const Fees = () => {
       header: 'Receipt',
       accessor: 'file_path',
       render: (row) => row.file_path ? (
-        <a 
-          href={`${API_BASE_URL}/${row.file_path.replace(/\\\\/g, '/')}`} 
-          target="_blank" 
+        <a
+          href={`${API_BASE_URL}/${row.file_path.replace(/\\\\/g, '/')}`}
+          target="_blank"
           rel="noopener noreferrer"
           style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--primary-yellow)', textDecoration: 'none', background: 'rgba(245, 195, 0, 0.1)', padding: '6px 12px', borderRadius: '8px' }}
         >
@@ -604,32 +604,32 @@ const Fees = () => {
           </button>
         </div>
       </div>
-      <DataTable 
-        columns={columns} 
-        data={displayFees} 
+      <DataTable
+        columns={columns}
+        data={displayFees}
         onEdit={handleEdit}
         onDelete={handleDelete}
       />
       <AnimatePresence>
         {modalMode && (
-          <FeeModal 
+          <FeeModal
             students={students}
-            onClose={() => setModalMode(false)} 
-            onSave={handleSave} 
+            onClose={() => setModalMode(false)}
+            onSave={handleSave}
           />
         )}
         {profileModalMode && (
-          <ProfileModal 
+          <ProfileModal
             students={students}
-            onClose={() => setProfileModalMode(false)} 
-            onSave={handleSaveProfile} 
+            onClose={() => setProfileModalMode(false)}
+            onSave={handleSaveProfile}
           />
         )}
         {editingFee && (
-          <EditFeeModal 
+          <EditFeeModal
             fee={editingFee}
-            onClose={() => setEditingFee(null)} 
-            onSave={handleUpdateFee} 
+            onClose={() => setEditingFee(null)}
+            onSave={handleUpdateFee}
           />
         )}
       </AnimatePresence>

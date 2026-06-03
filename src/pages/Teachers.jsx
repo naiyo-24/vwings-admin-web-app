@@ -4,7 +4,7 @@ import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import DataTable from '../components/DataTable';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'https://appbackend.vwings247.me';
 
 const TeacherModal = ({ teacher, courses, onClose, onSave }) => {
   const toast = useToast();
@@ -48,13 +48,13 @@ const TeacherModal = ({ teacher, courses, onClose, onSave }) => {
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
         className="glass-card" style={{ width: '100%', maxWidth: '800px', maxHeight: '90vh', display: 'flex', flexDirection: 'column', background: 'var(--background)', overflow: 'hidden' }}
       >
         <div style={{ padding: '24px 32px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h3 style={{ margin: 0 }}>{teacher ? 'Edit Teacher' : 'Add Teacher'}</h3>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}><X size={20}/></button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}><X size={20} /></button>
         </div>
 
         <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', padding: '0 24px' }}>
@@ -66,7 +66,7 @@ const TeacherModal = ({ teacher, courses, onClose, onSave }) => {
         <div style={{ overflowY: 'auto', flex: 1, minHeight: 0 }}>
           <div style={{ padding: '32px' }}>
             <form id="teacher-form" onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              
+
               {activeTab === 'personal' && (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '24px' }}>
                   <div className="input-group" style={{ marginBottom: 0 }}>
@@ -116,10 +116,10 @@ const TeacherModal = ({ teacher, courses, onClose, onSave }) => {
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', background: 'var(--surface)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border)' }}>
                       {courses.map(course => (
                         <label key={course.course_id} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.9rem' }}>
-                          <input 
-                            type="checkbox" 
-                            checked={formData.courses_assigned.includes(course.course_id)} 
-                            onChange={() => handleCourseToggle(course.course_id)} 
+                          <input
+                            type="checkbox"
+                            checked={formData.courses_assigned.includes(course.course_id)}
+                            onChange={() => handleCourseToggle(course.course_id)}
                           />
                           {course.course_name}
                         </label>
@@ -210,7 +210,7 @@ const Teachers = () => {
           formData.append(key, value);
         }
       });
-      
+
       if (photoFile) {
         formData.append('profile_photo', photoFile);
       }
@@ -248,16 +248,16 @@ const Teachers = () => {
 
   const columns = [
     { header: 'Teacher ID', accessor: 'teacher_id' },
-    { 
-      header: 'Teacher Profile', 
+    {
+      header: 'Teacher Profile',
       accessor: 'full_name',
       render: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           {row.profile_photo ? (
-            <img 
-              src={`${API_BASE_URL}/${row.profile_photo.replace(/\\\\/g, '/')}`} 
-              alt={row.full_name} 
-              style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} 
+            <img
+              src={`${API_BASE_URL}/${row.profile_photo.replace(/\\\\/g, '/')}`}
+              alt={row.full_name}
+              style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }}
             />
           ) : (
             <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--gradient-button)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--deep-navy)', fontWeight: 'bold', fontSize: '14px' }}>
@@ -271,8 +271,8 @@ const Teachers = () => {
         </div>
       )
     },
-    { 
-      header: 'Assigned Courses', 
+    {
+      header: 'Assigned Courses',
       accessor: 'courses_assigned',
       render: (row) => (
         <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
@@ -296,20 +296,20 @@ const Teachers = () => {
 
   return (
     <div style={{ animation: 'slideUp 0.5s ease' }}>
-      <DataTable 
-        title="Teachers Management" 
-        columns={columns} 
-        data={teachers} 
+      <DataTable
+        title="Teachers Management"
+        columns={columns}
+        data={teachers}
         onEdit={(teacher) => { setSelectedTeacher(teacher); setModalMode('edit'); }}
         onDelete={handleDelete}
       />
       <AnimatePresence>
         {modalMode && (
-          <TeacherModal 
+          <TeacherModal
             teacher={selectedTeacher}
             courses={courses}
-            onClose={() => setModalMode(null)} 
-            onSave={handleSave} 
+            onClose={() => setModalMode(null)}
+            onSave={handleSave}
           />
         )}
       </AnimatePresence>
