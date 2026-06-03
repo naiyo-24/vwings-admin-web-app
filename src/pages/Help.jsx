@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, MessageSquare, Phone, Mail, FileText, CheckCircle, Clock } from 'lucide-react';
 import DataTable from '../components/DataTable';
 
-const API_BASE_URL = 'https://appbackend.vwings247.me';
+const API_BASE_URL = 'http://localhost:8000';
 
 const HelpModal = ({ query, onClose, onSave }) => {
   const toast = useToast();

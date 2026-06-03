@@ -4,7 +4,7 @@ import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import DataTable from '../components/DataTable';
 
-const API_BASE_URL = 'https://appbackend.vwings247.me';
+const API_BASE_URL = 'http://localhost:8000';
 
 const StudentModal = ({ student, courses, onClose, onSave }) => {
   const toast = useToast();
@@ -289,7 +289,6 @@ const Students = () => {
         title="Students Management"
         columns={columns}
         data={students}
-        onAdd={() => { setSelectedStudent(null); setModalMode('create'); }}
         onEdit={(student) => { setSelectedStudent(student); setModalMode('edit'); }}
         onDelete={handleDelete}
         onSearch={handleSearch}

@@ -5,7 +5,7 @@ import DataTable from '../components/DataTable';
 
 import { useToast } from '../components/ToastContext';
 
-const API_BASE_URL = 'https://appbackend.vwings247.me';
+const API_BASE_URL = 'http://localhost:8000';
 
 const Commissions = () => {
   const toast = useToast();

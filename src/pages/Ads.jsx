@@ -4,7 +4,7 @@ import { X, Image as ImageIcon, ExternalLink } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import DataTable from '../components/DataTable';
 
-const API_BASE_URL = 'https://appbackend.vwings247.me';
+const API_BASE_URL = 'http://localhost:8000';
 
 const AdModal = ({ ad, onClose, onSave }) => {
   const toast = useToast();

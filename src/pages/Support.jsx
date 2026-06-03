@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Globe, Mail, MapPin, Phone, User, Smartphone, MessageSquare, Send, CheckCircle } from 'lucide-react';
 
-const API_BASE_URL = 'https://appbackend.vwings247.me';
+const API_BASE_URL = 'http://localhost:8000';
 
 const Support = () => {
   const [formData, setFormData] = useState({ name: '', phone_no: '', email: '', problem_description: '' });

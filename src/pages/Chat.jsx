@@ -3,7 +3,7 @@ import { useToast } from '../components/ToastContext';
 import { Video, Calendar, Clock, MoreVertical, Edit, Link, AlertCircle, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const API_BASE_URL = 'https://appbackend.vwings247.me';
+const API_BASE_URL = 'http://localhost:8000';
 
 const LiveClassCard = ({ liveClass, idx, onEdit }) => {
   const toast = useToast();

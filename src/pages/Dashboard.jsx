@@ -5,7 +5,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const API_BASE_URL = 'https://appbackend.vwings247.me';
+const API_BASE_URL = 'http://localhost:8000';
 
 const StatCard = ({ title, value, icon, color, delay = 0, loading }) => (
   <motion.div

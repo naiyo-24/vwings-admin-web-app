@@ -1,17 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Search, Plus, MoreVertical, Edit, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const DataTable = ({ title, columns, data, onAdd, onEdit, onDelete, onSearch }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
+  const onSearchRef = useRef(onSearch);
+
   useEffect(() => {
-    if (!onSearch) return;
+    onSearchRef.current = onSearch;
+  }, [onSearch]);
+
+  useEffect(() => {
+    if (!onSearchRef.current) return;
     const timer = setTimeout(() => {
-      onSearch(searchTerm);
+      onSearchRef.current(searchTerm);
     }, 300);
     return () => clearTimeout(timer);
-  }, [searchTerm, onSearch]);
+  }, [searchTerm]);
 
   const filteredData = onSearch ? data : data.filter(row => {
     if (!searchTerm) return true;

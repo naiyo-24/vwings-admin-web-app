@@ -3,7 +3,7 @@ import { useToast } from '../components/ToastContext';
 import { Plus, BookOpen, Clock, Users, MoreVertical, Edit, Trash2, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const API_BASE_URL = 'https://appbackend.vwings247.me';
+const API_BASE_URL = 'http://localhost:8000';
 
 const CourseCard = ({ course, idx, onEdit, onDelete }) => {
   const toast = useToast();
