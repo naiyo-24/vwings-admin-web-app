@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.frontend
-    container_name: vwings_counsellor_frontend
+    container_name: vwings_admin_frontend
     ports:
       - "8006:8006"
     restart: unless-stopped
