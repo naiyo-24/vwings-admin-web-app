@@ -50,7 +50,7 @@ const LiveClassCard = ({ liveClass, idx, onEdit }) => {
               }}>
                 <button 
                   onClick={() => { setShowMenu(false); onEdit(liveClass); }}
-                  style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px', background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', borderRadius: '4px', textAlign: 'left' }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px', background: 'transparent', border: 'none', color: '#FFFFFF', cursor: 'pointer', borderRadius: '4px', textAlign: 'left' }}
                   className="menu-item-hover"
                 >
                   <Edit size={14} /> Add/Edit Meeting Link
@@ -246,7 +246,7 @@ const ChatClasses = () => {
       </AnimatePresence>
       <style>{`
         .menu-item-hover:hover {
-          background: rgba(255,255,255,0.1) !important;
+          var(--surface-hover) !important;
         }
       `}</style>
     </div>

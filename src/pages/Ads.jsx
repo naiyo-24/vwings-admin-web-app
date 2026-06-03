@@ -108,6 +108,22 @@ const Ads = () => {
     fetchData();
   }, []);
 
+  const handleSearch = async (term) => {
+    if (!term) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/ads/get-all`);
+        if (res.ok) setAds(await res.json());
+      } catch (err) { console.error(err); }
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE_URL}/search/table/ads?q=${encodeURIComponent(term)}`);
+      if (res.ok) setAds(await res.json());
+    } catch (err) {
+      console.error('Error searching ads:', err);
+    }
+  };
+
   const handleSave = async (data, imageFile) => {
     try {
       const formData = new FormData();
@@ -224,6 +240,7 @@ const Ads = () => {
         onAdd={() => { setSelectedAd(null); setModalMode('create'); }}
         onEdit={(ad) => { setSelectedAd(ad); setModalMode('edit'); }}
         onDelete={handleDelete}
+        onSearch={handleSearch}
       />
       <AnimatePresence>
         {modalMode && (

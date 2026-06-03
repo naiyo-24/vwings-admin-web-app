@@ -49,7 +49,7 @@ const CourseCard = ({ course, idx, onEdit, onDelete }) => {
             }}>
               <button 
                 onClick={() => { setShowMenu(false); onEdit(course); }}
-                style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px', background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', borderRadius: '4px', textAlign: 'left' }}
+                style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px', background: 'transparent', border: 'none', color: '#FFFFFF', cursor: 'pointer', borderRadius: '4px', textAlign: 'left' }}
                 className="menu-item-hover"
               >
                 <Edit size={14} /> Edit
@@ -77,7 +77,7 @@ const CourseCard = ({ course, idx, onEdit, onDelete }) => {
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
           <BookOpen size={14} /> Code: {course.course_code}
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', color: 'var(--primary-yellow)', fontWeight: '600' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', color: 'var(--primary)', fontWeight: '600' }}>
           ₹{course.general_data?.course_fees || 0}
         </div>
       </div>
@@ -380,7 +380,7 @@ const Courses = () => {
       </AnimatePresence>
       <style>{`
         .menu-item-hover:hover {
-          background: rgba(255,255,255,0.1) !important;
+          var(--surface-hover) !important;
         }
       `}</style>
     </div>

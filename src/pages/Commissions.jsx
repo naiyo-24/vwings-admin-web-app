@@ -43,6 +43,22 @@ const Commissions = () => {
     fetchData();
   }, []);
 
+  const handleSearchPayouts = async (term) => {
+    if (!term) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/commissions/payouts`);
+        if (res.ok) setPayouts(await res.json());
+      } catch (err) { console.error(err); }
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE_URL}/search/table/payouts?q=${encodeURIComponent(term)}`);
+      if (res.ok) setPayouts(await res.json());
+    } catch (err) {
+      console.error('Error searching payouts:', err);
+    }
+  };
+
   const handleUpdateStatus = async (ledgerId, newStatus) => {
     try {
       await fetch(`${API_BASE_URL}/api/commissions/ledger/${ledgerId}/status`, {
@@ -90,7 +106,7 @@ const Commissions = () => {
   const ledgerColumns = [
     { header: 'Counsellor', accessor: 'counsellor_id', render: (row) => getCounsellorName(row.counsellor_id) },
     { header: 'Student ID', accessor: 'student_id' },
-    { header: 'Amount', accessor: 'commission_amount', render: (row) => <strong style={{ color: 'var(--primary-yellow)' }}>₹{row.commission_amount}</strong> },
+    { header: 'Amount', accessor: 'commission_amount', render: (row) => <strong style={{ color: 'var(--primary)' }}>₹{row.commission_amount}</strong> },
     { header: 'Status', accessor: 'status', render: (row) => {
       let color = '#ccc';
       if(row.status === 'Approved') color = '#4ade80';
@@ -116,7 +132,7 @@ const Commissions = () => {
   const payoutColumns = [
     { header: 'Payout No', accessor: 'payout_no' },
     { header: 'Counsellor', accessor: 'counsellor_id', render: (row) => getCounsellorName(row.counsellor_id) },
-    { header: 'Amount', accessor: 'amount', render: (row) => <strong style={{ color: 'var(--primary-yellow)' }}>₹{row.amount}</strong> },
+    { header: 'Amount', accessor: 'amount', render: (row) => <strong style={{ color: 'var(--primary)' }}>₹{row.amount}</strong> },
     { header: 'Method', accessor: 'payment_method' },
     { header: 'Reference', accessor: 'reference_no', render: (row) => row.reference_no || '-' },
     { header: 'Date', accessor: 'created_at', render: (row) => new Date(row.created_at).toLocaleDateString() }
@@ -126,11 +142,11 @@ const Commissions = () => {
 
   return (
     <div style={{ animation: 'slideUp 0.5s ease' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
         <h2 style={{ margin: 0 }}>Counsellor Commissions & Payouts</h2>
-        <div style={{ display: 'flex', gap: '16px' }}>
-          <button className={`btn-${activeTab === 'ledger' ? 'primary' : 'secondary'}`} onClick={() => setActiveTab('ledger')}>Commission Ledger</button>
-          <button className={`btn-${activeTab === 'payouts' ? 'primary' : 'secondary'}`} onClick={() => setActiveTab('payouts')}>Payouts</button>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
+          <button className={`btn-${activeTab === 'ledger' ? 'primary' : 'secondary'}`} onClick={() => setActiveTab('ledger')} style={{ whiteSpace: 'nowrap' }}>Commission Ledger</button>
+          <button className={`btn-${activeTab === 'payouts' ? 'primary' : 'secondary'}`} onClick={() => setActiveTab('payouts')} style={{ whiteSpace: 'nowrap' }}>Payouts</button>
         </div>
       </div>
 
@@ -149,6 +165,7 @@ const Commissions = () => {
             title="Payouts History" 
             columns={payoutColumns} 
             data={payouts} 
+            onSearch={handleSearchPayouts}
           />
         </div>
       )}
@@ -177,7 +194,7 @@ const Commissions = () => {
                   </div>
 
                   {selectedCounsellorData && (
-                    <div style={{ background: 'rgba(255,255,255,0.05)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)', fontSize: '14px', color: 'var(--text-secondary)' }}>
+                    <div style={{ background: 'var(--surface-hover)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)', fontSize: '14px', color: 'var(--text-secondary)' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', color: 'var(--text-main)', fontWeight: 'bold' }}>
                         <CreditCard size={16} /> Bank & Payment Details
                       </div>

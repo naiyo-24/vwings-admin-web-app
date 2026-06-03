@@ -107,6 +107,22 @@ const Announcements = () => {
     fetchData();
   }, []);
 
+  const handleSearch = async (term) => {
+    if (!term) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/announcements/get-all`);
+        if (res.ok) setAnnouncements(await res.json());
+      } catch (err) { console.error(err); }
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE_URL}/search/table/announcements?q=${encodeURIComponent(term)}`);
+      if (res.ok) setAnnouncements(await res.json());
+    } catch (err) {
+      console.error('Error searching announcements:', err);
+    }
+  };
+
   const handleSave = async (data) => {
     try {
       if (modalMode === 'create') {
@@ -174,7 +190,7 @@ const Announcements = () => {
       header: 'Target Role', 
       accessor: 'role',
       render: (row) => (
-        <span style={{ textTransform: 'capitalize', padding: '4px 12px', background: 'rgba(255,255,255,0.1)', borderRadius: '12px', fontSize: '12px' }}>
+        <span style={{ textTransform: 'capitalize', padding: '4px 12px', background: 'var(--surface-hover)', borderRadius: '12px', fontSize: '12px' }}>
           {row.role}
         </span>
       )
@@ -213,6 +229,7 @@ const Announcements = () => {
         onAdd={() => { setSelectedAnnouncement(null); setModalMode('create'); }}
         onEdit={(ann) => { setSelectedAnnouncement(ann); setModalMode('edit'); }}
         onDelete={handleDelete}
+        onSearch={handleSearch}
       />
       <AnimatePresence>
         {modalMode && (

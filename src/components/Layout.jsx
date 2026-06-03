@@ -1,14 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
-import { Search, LogOut, User, Mail, Shield } from 'lucide-react';
+import { Search, LogOut, User, Mail, Shield, Menu } from 'lucide-react';
 import Footer from './Footer';
 import NotificationBell from './NotificationBell';
+import GlobalSearch from './GlobalSearch';
 
 const API_BASE_URL = 'http://localhost:8000';
 
 const Layout = ({ onLogout, admin }) => {
   const [showProfile, setShowProfile] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const profileRef = useRef(null);
   // Close profile on outside click
   useEffect(() => {
@@ -27,7 +29,7 @@ const Layout = ({ onLogout, admin }) => {
     position: 'absolute',
     top: 'calc(100% + 12px)',
     right: 0,
-    background: 'rgba(5, 5, 15, 0.98)',
+    background: 'var(--surface)',
     border: '1px solid var(--border)',
     borderRadius: '16px',
     backdropFilter: 'blur(20px)',
@@ -40,16 +42,36 @@ const Layout = ({ onLogout, admin }) => {
 
   return (
     <div className="app-container">
-      <Sidebar onLogout={onLogout} />
+      <div 
+        className={`sidebar-overlay ${isMobileSidebarOpen ? 'open' : ''}`}
+        onClick={() => setIsMobileSidebarOpen(false)}
+      />
+      <Sidebar 
+        onLogout={onLogout} 
+        isOpen={isMobileSidebarOpen} 
+        onClose={() => setIsMobileSidebarOpen(false)} 
+      />
 
       <main className="main-content">
         <header className="topbar">
-          <div>
-            <h2 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-main)' }}>Welcome back, Admin! ✈️</h2>
-            <p style={{ margin: '4px 0 0 0', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Ready for your next administration session?</p>
+          <div className="topbar-left">
+            <button 
+              className="mobile-menu-btn"
+              onClick={() => setIsMobileSidebarOpen(true)}
+              style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer', display: 'flex' }}
+            >
+              <Menu size={28} />
+            </button>
+            <div className="welcome-text">
+              <h2 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-main)' }}>Welcome back! ✈️</h2>
+              <p className="welcome-sub" style={{ margin: '4px 0 0 0', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Ready for your next administration session?</p>
+            </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+          <div className="topbar-right">
+
+            {/* Global Search */}
+            <GlobalSearch />
 
             {/* Notifications Bell */}
             <NotificationBell role="admin" userId={admin?.id || "admin"} />

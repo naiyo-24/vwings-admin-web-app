@@ -71,7 +71,7 @@ const Support = () => {
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
             transition={{ type: "spring", stiffness: 200, damping: 15 }}
-            style={{ margin: '0 auto 24px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.05)', padding: '16px', borderRadius: '24px', width: 'fit-content', boxShadow: '0 8px 32px rgba(0,0,0,0.3), inset 0 0 0 1px rgba(255,255,255,0.1)' }}
+            style={{ margin: '0 auto 24px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--surface-hover)', padding: '16px', borderRadius: '24px', width: 'fit-content', boxShadow: '0 8px 32px rgba(0,0,0,0.3), inset 0 0 0 1px rgba(255,255,255,0.1)' }}
           >
             <img src="/assets/V-Wings_Logo_nobg.png" alt="VWings24x7 Logo" style={{ width: '80px', height: '80px', borderRadius: '12px', objectFit: 'contain' }} />
           </motion.div>
@@ -86,11 +86,11 @@ const Support = () => {
               <motion.a 
                 key={i}
                 href={link.href} 
-                whileHover={{ scale: 1.1, backgroundColor: 'rgba(245, 195, 0, 0.1)', color: 'var(--primary-yellow)', borderColor: 'var(--primary-yellow)' }}
-                style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.03)', padding: '10px 20px', borderRadius: '100px', textDecoration: 'none', transition: 'all 0.3s ease', border: '1px solid var(--border)' }}
+                whileHover={{ scale: 1.05, backgroundColor: 'rgba(123, 7, 113, 0.1)', color: '#7B0771', borderColor: '#7B0771' }}
+                style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#1A2134', background: '#FFFFFF', padding: '10px 24px', borderRadius: '100px', textDecoration: 'none', transition: 'all 0.3s ease', border: '1px solid rgba(192, 190, 197, 0.5)', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}
               >
-                {link.icon}
-                <span style={{ fontSize: '0.9rem', fontWeight: '500' }}>{link.label}</span>
+                {React.cloneElement(link.icon, { color: 'currentColor' })}
+                <span style={{ fontSize: '0.95rem', fontWeight: '600' }}>{link.label}</span>
               </motion.a>
             ))}
           </div>
@@ -124,23 +124,23 @@ const Support = () => {
           
           <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
             <div style={{ position: 'relative', flex: 1, minWidth: '250px' }}>
-              <User size={18} style={{ position: 'absolute', left: '16px', top: '16px', color: focusedField === 'name' ? 'var(--primary-yellow)' : 'var(--text-muted)', transition: 'color 0.3s' }} />
-              <input type="text" name="name" value={formData.name} onChange={handleInputChange} onFocus={() => setFocusedField('name')} onBlur={() => setFocusedField(null)} required placeholder="Full name" style={{ width: '100%', padding: '14px 16px 14px 48px', background: 'rgba(0,0,0,0.2)', border: focusedField === 'name' ? '1px solid var(--primary-yellow)' : '1px solid var(--border)', borderRadius: '12px', color: 'var(--text-main)', fontSize: '1rem', transition: 'all 0.3s', outline: 'none', boxShadow: focusedField === 'name' ? '0 0 0 3px rgba(245, 195, 0, 0.1)' : 'none' }} />
+              <User size={18} style={{ position: 'absolute', left: '16px', top: '16px', color: focusedField === 'name' ? 'var(--primary)' : 'var(--text-muted)', transition: 'color 0.3s' }} />
+              <input type="text" name="name" value={formData.name} onChange={handleInputChange} onFocus={() => setFocusedField('name')} onBlur={() => setFocusedField(null)} required placeholder="Full name" style={{ width: '100%', padding: '14px 16px 14px 48px', background: 'rgba(0,0,0,0.2)', border: focusedField === 'name' ? '1px solid var(--primary)' : '1px solid var(--border)', borderRadius: '12px', color: 'var(--text-main)', fontSize: '1rem', transition: 'all 0.3s', outline: 'none', boxShadow: focusedField === 'name' ? '0 0 0 3px rgba(123, 7, 113, 0.1)' : 'none' }} />
             </div>
             
             <div style={{ position: 'relative', flex: 1, minWidth: '250px' }}>
-              <Smartphone size={18} style={{ position: 'absolute', left: '16px', top: '16px', color: focusedField === 'phone' ? 'var(--primary-yellow)' : 'var(--text-muted)', transition: 'color 0.3s' }} />
-              <input type="text" name="phone_no" value={formData.phone_no} onChange={handleInputChange} onFocus={() => setFocusedField('phone')} onBlur={() => setFocusedField(null)} required placeholder="Phone number" style={{ width: '100%', padding: '14px 16px 14px 48px', background: 'rgba(0,0,0,0.2)', border: focusedField === 'phone' ? '1px solid var(--primary-yellow)' : '1px solid var(--border)', borderRadius: '12px', color: 'var(--text-main)', fontSize: '1rem', transition: 'all 0.3s', outline: 'none', boxShadow: focusedField === 'phone' ? '0 0 0 3px rgba(245, 195, 0, 0.1)' : 'none' }} />
+              <Smartphone size={18} style={{ position: 'absolute', left: '16px', top: '16px', color: focusedField === 'phone' ? 'var(--primary)' : 'var(--text-muted)', transition: 'color 0.3s' }} />
+              <input type="text" name="phone_no" value={formData.phone_no} onChange={handleInputChange} onFocus={() => setFocusedField('phone')} onBlur={() => setFocusedField(null)} required placeholder="Phone number" style={{ width: '100%', padding: '14px 16px 14px 48px', background: 'rgba(0,0,0,0.2)', border: focusedField === 'phone' ? '1px solid var(--primary)' : '1px solid var(--border)', borderRadius: '12px', color: 'var(--text-main)', fontSize: '1rem', transition: 'all 0.3s', outline: 'none', boxShadow: focusedField === 'phone' ? '0 0 0 3px rgba(123, 7, 113, 0.1)' : 'none' }} />
             </div>
           </div>
           
           <div style={{ position: 'relative' }}>
-            <Mail size={18} style={{ position: 'absolute', left: '16px', top: '16px', color: focusedField === 'email' ? 'var(--primary-yellow)' : 'var(--text-muted)', transition: 'color 0.3s' }} />
-            <input type="email" name="email" value={formData.email} onChange={handleInputChange} onFocus={() => setFocusedField('email')} onBlur={() => setFocusedField(null)} required placeholder="Email address" style={{ width: '100%', padding: '14px 16px 14px 48px', background: 'rgba(0,0,0,0.2)', border: focusedField === 'email' ? '1px solid var(--primary-yellow)' : '1px solid var(--border)', borderRadius: '12px', color: 'var(--text-main)', fontSize: '1rem', transition: 'all 0.3s', outline: 'none', boxShadow: focusedField === 'email' ? '0 0 0 3px rgba(245, 195, 0, 0.1)' : 'none' }} />
+            <Mail size={18} style={{ position: 'absolute', left: '16px', top: '16px', color: focusedField === 'email' ? 'var(--primary)' : 'var(--text-muted)', transition: 'color 0.3s' }} />
+            <input type="email" name="email" value={formData.email} onChange={handleInputChange} onFocus={() => setFocusedField('email')} onBlur={() => setFocusedField(null)} required placeholder="Email address" style={{ width: '100%', padding: '14px 16px 14px 48px', background: 'rgba(0,0,0,0.2)', border: focusedField === 'email' ? '1px solid var(--primary)' : '1px solid var(--border)', borderRadius: '12px', color: 'var(--text-main)', fontSize: '1rem', transition: 'all 0.3s', outline: 'none', boxShadow: focusedField === 'email' ? '0 0 0 3px rgba(123, 7, 113, 0.1)' : 'none' }} />
           </div>
           
           <div style={{ position: 'relative' }}>
-            <MessageSquare size={18} style={{ position: 'absolute', left: '16px', top: '16px', color: focusedField === 'desc' ? 'var(--primary-yellow)' : 'var(--text-muted)', transition: 'color 0.3s' }} />
+            <MessageSquare size={18} style={{ position: 'absolute', left: '16px', top: '16px', color: focusedField === 'desc' ? 'var(--primary)' : 'var(--text-muted)', transition: 'color 0.3s' }} />
             <textarea 
               name="problem_description" 
               value={formData.problem_description} 
@@ -148,7 +148,7 @@ const Support = () => {
               onFocus={() => setFocusedField('desc')} onBlur={() => setFocusedField(null)} 
               required 
               placeholder="Please describe your issue in detail..."
-              style={{ width: '100%', padding: '14px 16px 14px 48px', background: 'rgba(0,0,0,0.2)', border: focusedField === 'desc' ? '1px solid var(--primary-yellow)' : '1px solid var(--border)', borderRadius: '12px', color: 'var(--text-main)', minHeight: '140px', resize: 'vertical', fontSize: '1rem', transition: 'all 0.3s', outline: 'none', boxShadow: focusedField === 'desc' ? '0 0 0 3px rgba(245, 195, 0, 0.1)' : 'none' }}
+              style={{ width: '100%', padding: '14px 16px 14px 48px', background: 'rgba(0,0,0,0.2)', border: focusedField === 'desc' ? '1px solid var(--primary)' : '1px solid var(--border)', borderRadius: '12px', color: 'var(--text-main)', minHeight: '140px', resize: 'vertical', fontSize: '1rem', transition: 'all 0.3s', outline: 'none', boxShadow: focusedField === 'desc' ? '0 0 0 3px rgba(123, 7, 113, 0.1)' : 'none' }}
             />
           </div>
           

@@ -329,6 +329,22 @@ const Fees = () => {
     fetchData();
   }, []);
 
+  const handleSearch = async (term) => {
+    if (!term) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/fees/get-all`);
+        if (res.ok) setFees(await res.json());
+      } catch (err) { console.error(err); }
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE_URL}/search/table/fees?q=${encodeURIComponent(term)}`);
+      if (res.ok) setFees(await res.json());
+    } catch (err) {
+      console.error('Error searching fees:', err);
+    }
+  };
+
   const handleSave = async (data, feeFile) => {
     try {
       if (['cash', 'cheque', 'demand_draft'].includes(data.payment_mode)) {
@@ -505,7 +521,7 @@ const Fees = () => {
       header: 'Payment Type', 
       accessor: 'payment_type',
       render: (row) => (
-        <span style={{ padding: '4px 12px', background: 'rgba(255,255,255,0.1)', borderRadius: '12px', textTransform: 'capitalize', fontWeight: '500', color: row.payment_type === 'full' ? '#10b981' : '#3b82f6' }}>
+        <span style={{ padding: '4px 12px', background: 'var(--surface-hover)', borderRadius: '12px', textTransform: 'capitalize', fontWeight: '500', color: row.payment_type === 'full' ? '#10b981' : '#3b82f6' }}>
           {row.payment_type === 'full' ? 'Full Payment' : `Inst #${row.installment_no}`}
         </span>
       )
@@ -537,7 +553,7 @@ const Fees = () => {
       header: 'Amount',
       accessor: 'amount',
       render: (row) => (
-        <span style={{ fontWeight: '500', color: 'var(--primary-yellow)' }}>
+        <span style={{ fontWeight: '600', color: 'var(--primary)' }}>
           ₹{row.amount || 0}
         </span>
       )
@@ -579,7 +595,7 @@ const Fees = () => {
           href={`${API_BASE_URL}/${row.file_path.replace(/\\\\/g, '/')}`} 
           target="_blank" 
           rel="noopener noreferrer"
-          style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--primary-yellow)', textDecoration: 'none', background: 'rgba(245, 195, 0, 0.1)', padding: '6px 12px', borderRadius: '8px' }}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--primary)', textDecoration: 'none', background: 'rgba(123, 7, 113, 0.1)', padding: '6px 12px', borderRadius: '8px', fontWeight: '500' }}
         >
           <FileText size={16} /> View
         </a>
@@ -593,13 +609,13 @@ const Fees = () => {
 
   return (
     <div style={{ animation: 'slideUp 0.5s ease' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
         <h2 style={{ margin: 0 }}>Fees Management</h2>
-        <div style={{ display: 'flex', gap: '16px' }}>
-          <button className="btn-secondary" onClick={() => setProfileModalMode(true)}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
+          <button className="btn-secondary" onClick={() => setProfileModalMode(true)} style={{ whiteSpace: 'nowrap' }}>
             Set Fee Profile
           </button>
-          <button className="btn-primary" onClick={() => setModalMode(true)}>
+          <button className="btn-primary" onClick={() => setModalMode(true)} style={{ whiteSpace: 'nowrap' }}>
             Record Payment
           </button>
         </div>
@@ -609,6 +625,7 @@ const Fees = () => {
         data={displayFees} 
         onEdit={handleEdit}
         onDelete={handleDelete}
+        onSearch={handleSearch}
       />
       <AnimatePresence>
         {modalMode && (

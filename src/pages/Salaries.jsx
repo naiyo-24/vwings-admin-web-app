@@ -121,12 +121,12 @@ const SalaryModal = ({ teachers, onClose, onSave }) => {
                 </div>
               </div>
 
-              <div style={{ padding: '16px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '12px', border: '1px solid var(--border)' }}>
+              <div style={{ padding: '16px', background: 'var(--surface-hover)', borderRadius: '12px', border: '1px solid var(--border)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                   <span>Total Commission:</span>
                   <span>Rs. {(formData.commission_per_student * formData.referrals_admitted).toFixed(2)}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '18px', color: 'var(--primary-yellow)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '18px', color: 'var(--primary)' }}>
                   <span>Total Salary:</span>
                   <span>Rs. {totalSalary.toFixed(2)}</span>
                 </div>
@@ -172,6 +172,22 @@ const Salaries = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleSearch = async (term) => {
+    if (!term) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/salaries/get-all`);
+        if (res.ok) setSalaries(await res.json());
+      } catch (err) { console.error(err); }
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE_URL}/search/table/salaries?q=${encodeURIComponent(term)}`);
+      if (res.ok) setSalaries(await res.json());
+    } catch (err) {
+      console.error('Error searching salaries:', err);
+    }
+  };
 
   const handleSave = async (data) => {
     try {
@@ -250,7 +266,7 @@ const Salaries = () => {
     { 
       header: 'Period', 
       accessor: 'month',
-      render: (row) => <span style={{ padding: '4px 12px', background: 'rgba(255,255,255,0.1)', borderRadius: '12px' }}>{getMonthName(row.month)} {row.year}</span>
+      render: (row) => <span style={{ padding: '4px 12px', background: 'var(--surface-hover)', borderRadius: '12px' }}>{getMonthName(row.month)} {row.year}</span>
     },
     { 
       header: 'Referrals (Admitted)', 
@@ -260,7 +276,7 @@ const Salaries = () => {
     { 
       header: 'Total Salary', 
       accessor: 'total_salary',
-      render: (row) => <span style={{ fontWeight: 'bold', color: 'var(--primary-yellow)' }}>Rs. {(row.total_salary || 0).toFixed(2)}</span>
+      render: (row) => <span style={{ fontWeight: 'bold', color: 'var(--primary)' }}>Rs. {(row.total_salary || 0).toFixed(2)}</span>
     },
     { 
       header: 'Txn ID', 
@@ -280,7 +296,7 @@ const Salaries = () => {
           href={`${API_BASE_URL}/${row.file_path ? row.file_path.replace(/\\\\/g, '/') : ''}`} 
           target="_blank" 
           rel="noopener noreferrer"
-          style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--primary-yellow)', textDecoration: 'none', background: 'rgba(245, 195, 0, 0.1)', padding: '6px 12px', borderRadius: '8px' }}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--primary)', textDecoration: 'none', background: 'rgba(123, 7, 113, 0.1)', padding: '6px 12px', borderRadius: '8px', fontWeight: '500' }}
         >
           <FileText size={16} /> View
         </a>
@@ -298,6 +314,7 @@ const Salaries = () => {
         data={displaySalaries} 
         onAdd={() => setModalMode(true)}
         onDelete={handleDelete}
+        onSearch={handleSearch}
       />
       <AnimatePresence>
         {modalMode && (

@@ -204,6 +204,22 @@ const Enquiries = () => {
     fetchData();
   }, []);
 
+  const handleSearch = async (term) => {
+    if (!term) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/admission-enquiries/get-all`);
+        if (res.ok) setEnquiries(await res.json());
+      } catch (err) { console.error(err); }
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE_URL}/search/table/enquiries?q=${encodeURIComponent(term)}`);
+      if (res.ok) setEnquiries(await res.json());
+    } catch (err) {
+      console.error('Error searching enquiries:', err);
+    }
+  };
+
   const handleSave = async (data) => {
     try {
       if (modalMode === 'create') {
@@ -317,6 +333,7 @@ const Enquiries = () => {
         data={enquiries} 
         onEdit={(enquiry) => { setSelectedEnquiry(enquiry); setModalMode('edit'); }}
         onDelete={handleDelete}
+        onSearch={handleSearch}
       />
       <AnimatePresence>
         {modalMode && (

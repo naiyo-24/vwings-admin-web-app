@@ -219,7 +219,7 @@ const Onboarding = () => {
       <div style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', borderRadius: '12px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {courses.length === 0 && <span style={{ color: 'var(--text-muted)' }}>Loading courses...</span>}
         {courses.map(c => (
-          <label key={c.course_id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
+          <label key={c.course_id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
             <span>{c.course_name}</span>
             <input type="checkbox"
               checked={teacherForm.courses_assigned.includes(c.course_id)}
@@ -259,10 +259,10 @@ const Onboarding = () => {
   );
 
   // ─── Form Panels ───────────────────────────────────────────────────────────
-  const grid = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' };
+  const grid = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '20px' };
 
   const renderStudentWizard = () => (
-    <div className="glass-panel" style={{ padding: '32px' }}>
+    <div className="glass-panel" style={{ padding: 'clamp(16px, 5vw, 32px)' }}>
       <h2 style={{ margin: '0 0 28px 0', display: 'flex', alignItems: 'center', gap: '12px' }}>
         <UserPlus color="var(--primary-yellow)" /> Onboard Student
       </h2>
@@ -327,7 +327,7 @@ const Onboarding = () => {
   );
 
   const renderTeacherWizard = () => (
-    <div className="glass-panel" style={{ padding: '32px' }}>
+    <div className="glass-panel" style={{ padding: 'clamp(16px, 5vw, 32px)' }}>
       <h2 style={{ margin: '0 0 28px 0', display: 'flex', alignItems: 'center', gap: '12px' }}>
         <UserPlus color="var(--primary-yellow)" /> Onboard Teacher
       </h2>
@@ -362,7 +362,7 @@ const Onboarding = () => {
   );
 
   const renderCounsellorWizard = () => (
-    <div className="glass-panel" style={{ padding: '32px' }}>
+    <div className="glass-panel" style={{ padding: 'clamp(16px, 5vw, 32px)' }}>
       <h2 style={{ margin: '0 0 28px 0', display: 'flex', alignItems: 'center', gap: '12px' }}>
         <UserPlus color="var(--primary-yellow)" /> Onboard Counsellor
       </h2>
@@ -402,13 +402,14 @@ const Onboarding = () => {
         <p style={{ color: 'var(--text-muted)', margin: 0 }}>Select a role below to start the unified registration wizard.</p>
       </div>
 
-      <div style={{ display: 'flex', gap: '16px' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
         {tabs.map(t => (
           <button key={t.key} onClick={() => setActiveTab(t.key)}
             style={{
               flex: 1, padding: '16px', borderRadius: '16px', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
-              border: '1px solid var(--border)', transition: 'all 0.3s', color: 'white',
+              border: '1px solid var(--border)', transition: 'all 0.3s', 
+              color: activeTab === t.key ? '#FFFFFF' : 'var(--text-main)',
               background: activeTab === t.key ? 'linear-gradient(135deg, var(--deep-navy), var(--magenta))' : 'rgba(0,0,0,0.2)',
               boxShadow: activeTab === t.key ? '0 4px 20px rgba(182,0,125,0.3)' : 'none',
             }}>

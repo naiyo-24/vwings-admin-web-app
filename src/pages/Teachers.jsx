@@ -200,6 +200,22 @@ const Teachers = () => {
     fetchData();
   }, []);
 
+  const handleSearch = async (term) => {
+    if (!term) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/teachers/get-all`);
+        if (res.ok) setTeachers(await res.json());
+      } catch (err) { console.error(err); }
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE_URL}/search/table/teachers?q=${encodeURIComponent(term)}`);
+      if (res.ok) setTeachers(await res.json());
+    } catch (err) {
+      console.error('Error searching teachers:', err);
+    }
+  };
+
   const handleSave = async (data, photoFile) => {
     try {
       const formData = new FormData();
@@ -278,7 +294,7 @@ const Teachers = () => {
         <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
           {row.courses_assigned && row.courses_assigned.length > 0 ? (
             row.courses_assigned.map((cls, idx) => (
-              <span key={idx} style={{ background: 'rgba(255,255,255,0.1)', padding: '2px 8px', borderRadius: '4px', fontSize: '12px' }}>
+              <span key={idx} style={{ background: 'var(--surface-hover)', padding: '2px 8px', borderRadius: '4px', fontSize: '12px' }}>
                 {cls.course_name}
               </span>
             ))
@@ -302,6 +318,7 @@ const Teachers = () => {
         data={teachers} 
         onEdit={(teacher) => { setSelectedTeacher(teacher); setModalMode('edit'); }}
         onDelete={handleDelete}
+        onSearch={handleSearch}
       />
       <AnimatePresence>
         {modalMode && (

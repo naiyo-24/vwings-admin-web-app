@@ -4,10 +4,10 @@ import {
   LayoutDashboard, Users, UserCog, BookOpen, 
   CreditCard, Wallet, Megaphone, MonitorPlay, 
   MessageSquareMore, HelpCircle, GraduationCap, 
-  Sparkles, Rocket, LogOut, Video
+  Sparkles, Rocket, LogOut, Video, X
 } from 'lucide-react';
 
-const Sidebar = ({ onLogout }) => {
+const Sidebar = ({ onLogout, isOpen, onClose }) => {
   const menuItems = [
     { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/dashboard' },
     { name: 'Students', icon: <Users size={20} />, path: '/students' },
@@ -29,10 +29,19 @@ const Sidebar = ({ onLogout }) => {
   ];
 
   return (
-    <div className="sidebar">
-      <div className="brand" style={{ marginBottom: '20px' }}>
-        <img src="/assets/V-Wings_Logo_nobg.png" alt="Logo" style={{ width: '40px', height: '40px', objectFit: 'contain' }} />
-        <span style={{ color: 'var(--primary-yellow)' }}>Admin Panel</span>
+    <div className={`sidebar ${isOpen ? 'open' : ''}`}>
+      <div className="brand" style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <img src="/assets/V-Wings_Logo_nobg.png" alt="Logo" style={{ width: '40px', height: '40px', objectFit: 'contain' }} />
+          <span style={{ color: 'var(--primary-yellow)' }}>Admin Panel</span>
+        </div>
+        <button 
+          className="mobile-menu-btn" 
+          onClick={onClose}
+          style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer' }}
+        >
+          <X size={24} />
+        </button>
       </div>
 
       <div className="nav-links" style={{ overflowY: 'auto', paddingRight: '10px' }}>
@@ -40,6 +49,7 @@ const Sidebar = ({ onLogout }) => {
           <NavLink 
             key={index} 
             to={item.path} 
+            onClick={onClose}
             className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
           >
             {item.icon}

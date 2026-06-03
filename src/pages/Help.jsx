@@ -106,6 +106,22 @@ const Help = () => {
     fetchData();
   }, []);
 
+  const handleSearch = async (term) => {
+    if (!term) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/helpcenter/get-all`);
+        if (res.ok) setQueries(await res.json());
+      } catch (err) { console.error(err); }
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE_URL}/search/table/help_center?q=${encodeURIComponent(term)}`);
+      if (res.ok) setQueries(await res.json());
+    } catch (err) {
+      console.error('Error searching help queries:', err);
+    }
+  };
+
   const handleSave = async (reportId, newStatus) => {
     try {
       const response = await fetch(`${API_BASE_URL}/api/helpcenter/update-status/${reportId}`, {
@@ -186,6 +202,7 @@ const Help = () => {
         // We only edit existing queries in the admin panel, users create them.
         onEdit={(query) => setSelectedQuery(query)}
         onDelete={handleDelete}
+        onSearch={handleSearch}
       />
       
       <AnimatePresence>

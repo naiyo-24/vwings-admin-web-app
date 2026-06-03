@@ -181,6 +181,23 @@ const Students = () => {
     fetchData();
   }, []);
 
+  const handleSearch = async (term) => {
+    if (!term) {
+      // Fetch all if empty
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/students/get-all`);
+        if (res.ok) setStudents(await res.json());
+      } catch (err) { console.error(err); }
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE_URL}/search/table/students?q=${encodeURIComponent(term)}`);
+      if (res.ok) setStudents(await res.json());
+    } catch (err) {
+      console.error('Error searching students:', err);
+    }
+  };
+
   const handleSave = async (data, photoFile) => {
     try {
       const formData = new FormData();
@@ -275,6 +292,7 @@ const Students = () => {
         onAdd={() => { setSelectedStudent(null); setModalMode('create'); }}
         onEdit={(student) => { setSelectedStudent(student); setModalMode('edit'); }}
         onDelete={handleDelete}
+        onSearch={handleSearch}
       />
       <AnimatePresence>
         {modalMode && (

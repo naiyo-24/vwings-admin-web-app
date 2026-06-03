@@ -188,6 +188,22 @@ const Counsellors = () => {
     fetchData();
   }, []);
 
+  const handleSearch = async (term) => {
+    if (!term) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/counsellors/get-all`);
+        if (res.ok) setCounsellors(await res.json());
+      } catch (err) { console.error(err); }
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE_URL}/search/table/counsellors?q=${encodeURIComponent(term)}`);
+      if (res.ok) setCounsellors(await res.json());
+    } catch (err) {
+      console.error('Error searching counsellors:', err);
+    }
+  };
+
   const handleSave = async (data, commissions, photoFile) => {
     try {
       const formData = new FormData();
@@ -278,11 +294,11 @@ const Counsellors = () => {
       render: (row) => (
         <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
           {row.commission_type === 'fixed' ? (
-            <span style={{ background: 'rgba(255,255,255,0.1)', padding: '4px 8px', borderRadius: '4px', fontSize: '12px' }}>
+            <span style={{ background: 'var(--surface-hover)', padding: '4px 8px', borderRadius: '4px', fontSize: '12px' }}>
               Fixed: <strong style={{ color: 'var(--primary-yellow)' }}>₹{row.commission_value}</strong>
             </span>
           ) : row.commission_type === 'percentage' ? (
-            <span style={{ background: 'rgba(255,255,255,0.1)', padding: '4px 8px', borderRadius: '4px', fontSize: '12px' }}>
+            <span style={{ background: 'var(--surface-hover)', padding: '4px 8px', borderRadius: '4px', fontSize: '12px' }}>
               Percentage: <strong style={{ color: 'var(--primary-yellow)' }}>{row.commission_value}%</strong>
             </span>
           ) : (
@@ -304,6 +320,7 @@ const Counsellors = () => {
         data={counsellors} 
         onEdit={(counsellor) => { setSelectedCounsellor(counsellor); setModalMode('edit'); }}
         onDelete={handleDelete}
+        onSearch={handleSearch}
       />
       <AnimatePresence>
         {modalMode && (

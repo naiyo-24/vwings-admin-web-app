@@ -34,10 +34,10 @@ const Login = ({ onLogin }) => {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: 'spring', damping: 15, delay: 0.2 }}
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', gap: '16px' }}
+            style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', gap: 'clamp(8px, 2vw, 16px)' }}
           >
-            <img src="/assets/V-Wings_Logo_nobg.png" alt="VWings24x7 Logo" style={{ width: '90px', height: '90px', objectFit: 'contain' }} />
-            <span style={{ color: 'var(--primary-yellow)', fontSize: '36px', fontWeight: '800', letterSpacing: '1px' }}>VWings24x7</span>
+            <img src="/assets/V-Wings_Logo_nobg.png" alt="VWings24x7 Logo" style={{ width: 'clamp(60px, 15vw, 90px)', height: 'clamp(60px, 15vw, 90px)', objectFit: 'contain' }} />
+            <span className="text-gradient" style={{ fontSize: 'clamp(26px, 8vw, 36px)', fontWeight: '800', letterSpacing: '1px' }}>VWings24x7</span>
           </motion.div>
           <p>Admin Portal Login</p>
         </div>

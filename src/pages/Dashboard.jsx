@@ -23,14 +23,14 @@ const StatCard = ({ title, value, icon, color, delay = 0, loading }) => (
     </div>
     <div style={{ fontSize: '2.2rem', fontWeight: '700', color: 'var(--text-main)' }}>
       {loading ? (
-        <div style={{ width: '60px', height: '36px', background: 'rgba(255,255,255,0.1)', borderRadius: '8px', animation: 'pulse 1.5s infinite' }} />
+        <div style={{ width: '60px', height: '36px', background: 'var(--surface-hover)', borderRadius: '8px', animation: 'pulse 1.5s infinite' }} />
       ) : value}
     </div>
   </motion.div>
 );
 
 const RecentCard = ({ title, items, icon, keyField, nameField, subField, loading }) => (
-  <div className="glass-panel" style={{ padding: '24px', flex: 1, minWidth: 0 }}>
+  <div className="glass-panel" style={{ padding: '24px', flex: 1, minWidth: '300px' }}>
     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
       {icon}
       <h3 style={{ margin: 0, fontSize: '1.1rem' }}>{title}</h3>
@@ -43,7 +43,7 @@ const RecentCard = ({ title, items, icon, keyField, nameField, subField, loading
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         {items.slice(0, 5).map((item, i) => (
           <div key={item[keyField] || i} style={{ display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid var(--border)', paddingBottom: '10px' }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--deep-navy), var(--magenta))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '14px', flexShrink: 0 }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'var(--gradient-hero)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '14px', color: '#FFFFFF', flexShrink: 0 }}>
               {(item[nameField] || '?').charAt(0).toUpperCase()}
             </div>
             <div style={{ minWidth: 0 }}>
