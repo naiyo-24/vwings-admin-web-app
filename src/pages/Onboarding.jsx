@@ -3,7 +3,7 @@ import { UserPlus, BookOpen, Briefcase, GraduationCap, ArrowRight, Upload, Check
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '../components/ToastContext';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'https://appbackend.vwings247.me';
 
 // Reusable file upload button component
 const FileUploadBtn = ({ file, onFileChange, accept = 'image/*', label = 'Choose Photo' }) => (
@@ -408,7 +408,7 @@ const Onboarding = () => {
             style={{
               flex: 1, padding: '16px', borderRadius: '16px', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
-              border: '1px solid var(--border)', transition: 'all 0.3s', 
+              border: '1px solid var(--border)', transition: 'all 0.3s',
               color: activeTab === t.key ? '#FFFFFF' : 'var(--text-main)',
               background: activeTab === t.key ? 'linear-gradient(135deg, var(--deep-navy), var(--magenta))' : 'rgba(0,0,0,0.2)',
               boxShadow: activeTab === t.key ? '0 4px 20px rgba(182,0,125,0.3)' : 'none',

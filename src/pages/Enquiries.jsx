@@ -4,7 +4,7 @@ import { X, UserPlus, Phone, Activity } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import DataTable from '../components/DataTable';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'https://appbackend.vwings247.me';
 
 const EnquiryModal = ({ enquiry, courses, counsellors, onClose, onSave }) => {
   const toast = useToast();

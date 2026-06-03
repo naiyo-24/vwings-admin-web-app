@@ -48,7 +48,7 @@ Follow these steps to set up the project locally:
 3.  **Environment Variables:**
     Create a `.env` file in the root directory and configure the necessary environment variables.
     ```env
-    VITE_API_BASE_URL=http://localhost:8000
+    VITE_API_BASE_URL=https://appbackend.vwings247.me
     ```
 
 4.  **Start the development server:**

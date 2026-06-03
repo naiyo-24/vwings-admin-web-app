@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Search, Loader, User, BookOpen, UserCheck, GraduationCap, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'https://appbackend.vwings247.me';
 
 const GlobalSearch = () => {
   const [query, setQuery] = useState('');
@@ -104,11 +104,11 @@ const GlobalSearch = () => {
         />
         {isLoading && <Loader size={16} color="var(--text-muted)" style={{ animation: 'spin 1s linear infinite' }} />}
         {query && !isLoading && (
-          <X 
-            size={16} 
-            color="var(--text-muted)" 
-            style={{ cursor: 'pointer' }} 
-            onClick={() => { setQuery(''); setIsOpen(false); }} 
+          <X
+            size={16}
+            color="var(--text-muted)"
+            style={{ cursor: 'pointer' }}
+            onClick={() => { setQuery(''); setIsOpen(false); }}
           />
         )}
       </div>
@@ -145,8 +145,8 @@ const GlobalSearch = () => {
                     Students
                   </div>
                   {results.students.map(student => (
-                    <div 
-                      key={student.id} 
+                    <div
+                      key={student.id}
                       onClick={() => handleResultClick('student', student.id)}
                       style={{ padding: '10px 16px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', transition: 'background 0.2s' }}
                       onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-main)'}
@@ -175,8 +175,8 @@ const GlobalSearch = () => {
                     Teachers
                   </div>
                   {results.teachers.map(teacher => (
-                    <div 
-                      key={teacher.id} 
+                    <div
+                      key={teacher.id}
                       onClick={() => handleResultClick('teacher', teacher.id)}
                       style={{ padding: '10px 16px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', transition: 'background 0.2s' }}
                       onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-main)'}
@@ -205,8 +205,8 @@ const GlobalSearch = () => {
                     Counsellors
                   </div>
                   {results.counsellors.map(counsellor => (
-                    <div 
-                      key={counsellor.id} 
+                    <div
+                      key={counsellor.id}
                       onClick={() => handleResultClick('counsellor', counsellor.id)}
                       style={{ padding: '10px 16px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', transition: 'background 0.2s' }}
                       onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-main)'}
@@ -235,8 +235,8 @@ const GlobalSearch = () => {
                     Courses
                   </div>
                   {results.courses.map(course => (
-                    <div 
-                      key={course.id} 
+                    <div
+                      key={course.id}
                       onClick={() => handleResultClick('course', course.id)}
                       style={{ padding: '10px 16px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', transition: 'background 0.2s' }}
                       onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-main)'}
@@ -261,7 +261,7 @@ const GlobalSearch = () => {
           )}
         </div>
       )}
-      
+
       <style>{`
         @keyframes spin {
           from { transform: rotate(0deg); }

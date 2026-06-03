@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Globe, Mail, MapPin, Phone, User, Smartphone, MessageSquare, Send, CheckCircle } from 'lucide-react';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'https://appbackend.vwings247.me';
 
 const Support = () => {
   const [formData, setFormData] = useState({ name: '', phone_no: '', email: '', problem_description: '' });
@@ -85,7 +85,7 @@ const Support = () => {
             {socialLinks.map((link, i) => (
               <motion.a
                 key={i}
-                href={link.href} 
+                href={link.href}
                 whileHover={{ scale: 1.1, backgroundColor: 'rgba(245, 195, 0, 0.1)', color: 'var(--primary-yellow)', borderColor: 'var(--primary-yellow)' }}
                 style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.03)', padding: '10px 20px', borderRadius: '100px', textDecoration: 'none', transition: 'all 0.3s ease', border: '1px solid var(--border)' }}
               >
@@ -141,9 +141,9 @@ const Support = () => {
 
           <div style={{ position: 'relative' }}>
             <MessageSquare size={18} style={{ position: 'absolute', left: '16px', top: '16px', color: focusedField === 'desc' ? 'var(--primary-yellow)' : 'var(--text-muted)', transition: 'color 0.3s' }} />
-            <textarea 
-              name="problem_description" 
-              value={formData.problem_description} 
+            <textarea
+              name="problem_description"
+              value={formData.problem_description}
               onChange={handleInputChange}
               onFocus={() => setFocusedField('desc')} onBlur={() => setFocusedField(null)}
               required

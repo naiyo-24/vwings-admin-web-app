@@ -24,8 +24,8 @@ import AboutUs from './pages/AboutUs';
 import Support from './pages/Support';
 import Chat from './pages/Chat';
 
-//const API_BASE_URL = 'http://localhost:8000';
-const API_BASE_URL = 'http://localhost:8000';
+//const API_BASE_URL = 'https://appbackend.vwings247.me';
+const API_BASE_URL = 'https://appbackend.vwings247.me';
 function App() {
   const [loading, setLoading] = useState(true);
   const [admin, setAdmin] = useState(null); // stores { id, email }

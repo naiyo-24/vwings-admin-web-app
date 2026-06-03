@@ -4,7 +4,7 @@ import { X, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import DataTable from '../components/DataTable';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'https://appbackend.vwings247.me';
 
 const months = [
   { value: 1, label: 'January' }, { value: 2, label: 'February' },

@@ -6,7 +6,7 @@ import Footer from './Footer';
 import NotificationBell from './NotificationBell';
 import GlobalSearch from './GlobalSearch';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'https://appbackend.vwings247.me';
 
 const Layout = ({ onLogout, admin }) => {
   const [showProfile, setShowProfile] = useState(false);
@@ -42,20 +42,20 @@ const Layout = ({ onLogout, admin }) => {
 
   return (
     <div className="app-container">
-      <div 
+      <div
         className={`sidebar-overlay ${isMobileSidebarOpen ? 'open' : ''}`}
         onClick={() => setIsMobileSidebarOpen(false)}
       />
-      <Sidebar 
-        onLogout={onLogout} 
-        isOpen={isMobileSidebarOpen} 
-        onClose={() => setIsMobileSidebarOpen(false)} 
+      <Sidebar
+        onLogout={onLogout}
+        isOpen={isMobileSidebarOpen}
+        onClose={() => setIsMobileSidebarOpen(false)}
       />
 
       <main className="main-content">
         <header className="topbar">
           <div className="topbar-left">
-            <button 
+            <button
               className="mobile-menu-btn"
               onClick={() => setIsMobileSidebarOpen(true)}
               style={{ background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer', display: 'flex' }}

@@ -5,7 +5,7 @@ import DataTable from '../components/DataTable';
 
 import { useToast } from '../components/ToastContext';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'https://appbackend.vwings247.me';
 
 const Commissions = () => {
   const toast = useToast();
@@ -165,10 +165,10 @@ const Commissions = () => {
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
             <button className="btn-primary" onClick={() => setPayoutModalOpen(true)}>Generate Payout</button>
           </div>
-          <DataTable 
-            title="Payouts History" 
-            columns={payoutColumns} 
-            data={payouts} 
+          <DataTable
+            title="Payouts History"
+            columns={payoutColumns}
+            data={payouts}
             onSearch={handleSearchPayouts}
           />
         </div>
